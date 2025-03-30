@@ -59,7 +59,7 @@ export const useUpload = () => {
         })
         setIsOwner(true)
       } catch (err) {
-        console.log('err', err)
+        console.error('err', err)
       }
     }
   }
