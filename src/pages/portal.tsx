@@ -90,7 +90,7 @@ const Portal = () => {
   return (
     <div className="h-full flex">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-full bg-white">
+      <div className="flex-1 flex flex-col min-h-full bg-white min-w-0">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b flex items-start justify-between">
           <div>
@@ -145,7 +145,7 @@ const Portal = () => {
 
       {/* Preview Panel */}
       {selectedFileForPreview && (
-        <div className="w-[600px] border-l h-full bg-white">
+        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[600px] bg-white border-l border-gray-200 shadow-lg lg:shadow-none z-50">
           <FilePreview
             file={selectedFileForPreview}
             onClose={handleClosePreview}
