@@ -29,8 +29,11 @@ export interface IExecuteUserOperationRequest {
 }
 
 export interface IPortalMetadata {
-  name: string
-  description: string
+  data: {
+    name: string
+    description: string
+    pinataGateway: string
+  }
   pinataGateway: string
 }
 
@@ -43,4 +46,5 @@ export type PortalFile = {
   name: string
   extension: string
   createdAt: number
+  notes?: string
 }

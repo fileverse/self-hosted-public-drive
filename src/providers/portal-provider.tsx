@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { CreatePortalInputs } from '../components/create-new-form'
 import { PinataSDK } from 'pinata'
 import { generatePrivateKey } from 'viem/accounts'
@@ -12,7 +12,7 @@ import {
   parseEventLogs,
 } from 'viem'
 import { gnosis } from 'viem/chains'
-import { HomePageFlow, IPortalMetadata, PortalFile } from '../types'
+import { HomePageFlow, PortalFile } from '../types'
 import { getFileExtension } from '../utils/helpers'
 import { portalAbi } from '../data/portal-abi'
 import { DELETE_FILE_METADATA } from '../utils/constants'
@@ -25,10 +25,12 @@ type PortalContextType = {
   setOwnerDetails: (details: any) => Promise<void>
   addFile: (
     file: File,
-    onCompleteCb?: (file: PortalFile) => void
+    updateFileList: (file: PortalFile) => void,
+    notes?: string
   ) => Promise<void>
   agentAddress: Hex | null
   deleteFile: (fileId: number) => Promise<void>
+  clearOwnerDetails: () => void
 }
 
 const PortalContext = createContext<PortalContextType>({
@@ -40,6 +42,7 @@ const PortalContext = createContext<PortalContextType>({
   addFile: async () => {},
   agentAddress: null,
   deleteFile: async () => {},
+  clearOwnerDetails: () => {},
 })
 
 export const usePortalContext = () => {
@@ -53,13 +56,22 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
   const [pinataSDK, setPinataSDK] = useState<PinataSDK | null>(null)
   const [agentAddress, setAgentAddress] = useState<Hex | null>(null)
 
+  // Load saved portal details on mount
+  useEffect(() => {
+    const savedPortalDetails = localStorage.getItem('portalDetails')
+    if (savedPortalDetails) {
+      const details = JSON.parse(savedPortalDetails)
+      setOwnerDetails(details)
+    }
+  }, [])
+
   const createPortal = async (values: CreatePortalInputs) => {
     const pinataSDK = new PinataSDK({
       pinataJwt: values.pinataJWT,
       pinataGateway: values.pinataGateway,
     })
 
-    const portalMetadata: IPortalMetadata = {
+    const portalMetadata = {
       name: values.portalName,
       description: values.portalDescription,
       pinataGateway: values.pinataGateway,
@@ -122,11 +134,24 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
       ...portalDetails,
     })
     setAgentAddress(agentInstance.getAgentAddress())
+
+    // Save to localStorage
+    localStorage.setItem('portalDetails', JSON.stringify(portalDetails))
+  }
+
+  // Clear storage on logout or when needed
+  const clearOwnerDetails = () => {
+    localStorage.removeItem('portalDetails')
+    setPortalDetails(null)
+    setAgentInstance(null)
+    setPinataSDK(null)
+    setAgentAddress(null)
   }
 
   const addFile = async (
     file: File,
-    onCompleteCb?: (file: PortalFile) => void
+    updateFileList: (file: PortalFile) => void,
+    notes?: string
   ) => {
     if (!pinataSDK || !portalDetails || !agentInstance)
       throw new Error('Not initialized')
@@ -137,6 +162,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
       fileType: file.type,
       extension: getFileExtension(file.name),
       createdAt: Date.now(),
+      notes,
     } as PortalFile
 
     const { cid: metadataHash } = await pinataSDK.upload.public.json(
@@ -180,8 +206,8 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
     fileMetadata.contentHash = contentHash
     fileMetadata.metadataHash = metadataHash
 
-    if (onCompleteCb && typeof onCompleteCb === 'function')
-      onCompleteCb(fileMetadata)
+    if (updateFileList && typeof updateFileList === 'function')
+      updateFileList(fileMetadata)
   }
 
   const deleteFile = async (fileId: number) => {
@@ -231,6 +257,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
         addFile,
         agentAddress,
         deleteFile,
+        clearOwnerDetails,
       }}
     >
       {children}

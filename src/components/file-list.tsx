@@ -3,72 +3,67 @@ import { usePortalViewerContext } from '../providers/portal-viewer-provider'
 import { SkeletonLoader } from './skeleton-loader'
 import { PortalFile } from '../types'
 import { getNameAndExtension, getRelativeTime } from '../utils/helpers'
-import { useState } from 'react'
+import { DELETE_FILE_METADATA } from '../utils/constants'
 
-export const FileList = () => {
+type FileListProps = {
+  onFileSelect?: (file: PortalFile) => void
+}
+
+export const FileList = ({ onFileSelect }: FileListProps) => {
   const { isLoading, files } = usePortalViewerContext()
 
   if (isLoading) return <FileListLoader />
 
-  const fileList = files.map((file) => (
-    <FileListItem key={file.fileId} {...file} />
+  // Filter out deleted files
+  const activeFiles = files.filter(
+    (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
+  )
+
+  const fileList = activeFiles.map((file) => (
+    <FileListItem
+      key={file.fileId}
+      {...file}
+      onClick={() => onFileSelect?.(file)}
+    />
   ))
 
   return <div className="w-full flex flex-col">{fileList}</div>
 }
 
-const FileListItem = (props: PortalFile) => {
-  const { name, createdAt, contentHash } = props
+const FileListItem = ({
+  onClick,
+  ...props
+}: PortalFile & { onClick?: () => void }) => {
+  const { name, createdAt } = props
   const { name: nameWithoutExtension, extension } = getNameAndExtension(name)
-  const { portalMetadata } = usePortalViewerContext()
-  const [isDownloading, setIsDownloading] = useState(false)
-
-  const onDownload = async () => {
-    if (!portalMetadata || isDownloading) return
-    try {
-      const { pinataGateway } = portalMetadata
-      const pinataDomain = pinataGateway.startsWith('https://')
-        ? pinataGateway
-        : `https://${pinataGateway}`
-
-      setIsDownloading(true)
-      const response = await fetch(`${pinataDomain}/ipfs/${contentHash}`)
-      const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = name
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsDownloading(false)
-    }
-  }
 
   return (
     <div
-      onClick={onDownload}
-      className="w-full p-3 flex border-b border-b-border-primary cursor-pointer hover:bg-background-[#F2F4F5]"
+      onClick={onClick}
+      className="group px-6 py-3 flex items-center gap-3 cursor-pointer border-b hover:bg-[#F2F4F5] transition-all duration-200"
     >
-      <div className="flex gap-3 items-center">
-        <div className="w-10 h-10 bg-background-primary rounded-md flex items-center justify-center border border-border-primary">
-          <LucideIcon name="File" />
-        </div>
-        <div className="flex flex-col ">
-          <p className="text-heading-xsm">{nameWithoutExtension}</p>
-          <p className="text-helper-text-sm color-text-secondary">
-            {extension}
-          </p>
-        </div>
+      <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
+        <LucideIcon name="File" className="text-gray-600" />
       </div>
-      <div className="ml-auto text-right flex items-center gap-2">
-        <p className="text-helper-text-sm color-text-secondary">
-          Created At: {getRelativeTime(createdAt)}
+      <div className="flex-1 min-w-0">
+        <p className="text-[14px] leading-5 font-medium text-gray-900 truncate">
+          {nameWithoutExtension}
+        </p>
+        <p className="text-[12px] leading-4 text-gray-500">
+          {extension.toLowerCase()}
         </p>
       </div>
+      <div className="text-[12px] leading-4 text-gray-500 whitespace-nowrap">
+        Created {getRelativeTime(createdAt)}
+      </div>
+      <button
+        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all duration-200"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        <LucideIcon name="MoreVertical" size="md" />
+      </button>
     </div>
   )
 }

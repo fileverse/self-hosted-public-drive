@@ -7,6 +7,8 @@ import { CreateNewForm } from '../components/create-new-form'
 import { usePortalContext } from '../providers/portal-provider'
 import { DownloadKeys } from '../components/download-keys'
 import { Login } from '../components/login'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const HEADING_MAP = {
   [HomePageFlow.CREATE_NEW]: 'Portal Creation',
@@ -18,8 +20,24 @@ const DOWNLOAD_KEYS_DESCRIPTION =
   'Unlike big-tech platforms that can access your data, censor it, or arbitrarily revoke your account, Fileverse takes steps to offer you self-sovereignty. This static page is designed to make it easy for you to control your documents end-to-end without depending on centralized servers 💛'
 const DEFAULT_DESCRIPTION =
   'Independently recover all documents tied to your account in case the main Fileveres portal app is down.'
+
 const Home = () => {
   const { currentFlow, setCurrentFlow } = usePortalContext()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const portalData = localStorage.getItem('portalDetails')
+
+    if (portalData) {
+      try {
+        const { portalAddress, pinataGateway } = JSON.parse(portalData)
+        // Navigate using hash routing
+        navigate(`/${portalAddress}?gateway=${pinataGateway}`)
+      } catch (error) {
+        console.error('Failed to parse portal data:', error)
+      }
+    }
+  }, [navigate])
 
   const getComponent = () => {
     switch (currentFlow) {
