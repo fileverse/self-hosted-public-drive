@@ -20,7 +20,10 @@ export const Login = () => {
 
   const onLoginToPortal = () => {
     if (portalDetails && portalDetails.portalAddress) {
-      navigate('/' + portalDetails.portalAddress)
+      const gateway = portalDetails.pinataGateway || ''
+      navigate(
+        `/${portalDetails.portalAddress}?gateway=${encodeURIComponent(gateway)}`
+      )
     }
   }
 
