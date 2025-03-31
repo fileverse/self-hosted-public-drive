@@ -1,4 +1,4 @@
-import { Button, Label, TextAreaFieldV2 } from '@fileverse/ui'
+import { Button, Label } from '@fileverse/ui'
 import { useState } from 'react'
 import { Input } from './input'
 import { usePortalContext } from '../providers/portal-provider'

@@ -1,4 +1,4 @@
-import { Label, TextField, TextAreaFieldV2 } from '@fileverse/ui'
+import { Label, TextField } from '@fileverse/ui'
 
 type InputProps = {
   label: string
@@ -7,7 +7,6 @@ type InputProps = {
   required?: boolean
   id: string
   placeholder?: string
-  isTextArea?: boolean
 }
 
 export const Input = ({
