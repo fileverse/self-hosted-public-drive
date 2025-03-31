@@ -1,9 +1,9 @@
 const Footer = () => {
   return (
     <>
-      <div className="text-helper-text-sm color-text-secondary mt-auto">
+      <div className="mt-auto pt-6 sm:pt-8 text-helper-text-sm color-text-secondary mt-auto">
         <span>
-          [Descprtion] Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+          [Description] Lorem ipsum dolor sit amet, consectetur adipiscing elit,
           sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
           enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
           ut aliquip ex ea commodo consequat. Duis aute irure dolor in

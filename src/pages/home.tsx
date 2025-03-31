@@ -68,16 +68,22 @@ const Home = () => {
       : DEFAULT_DESCRIPTION
 
   return (
-    <main className="max-w-[768px] mx-auto py-6 flex flex-col h-full">
-      <div className="flex flex-col gap-2 mb-8 mt-6">
-        <PageHeading
-          heading={heading}
-          onBackClick={hasBackButton ? onBackButtonClick : undefined}
-        />
-        <p className="text-body-md color-text-secondary">{description}</p>
+    <main className="min-h-full px-4 sm:px-6">
+      <div className="max-w-[768px] mx-auto py-4 sm:py-6 flex flex-col h-full">
+        <div className="flex flex-col gap-2 mb-6 sm:mb-8 mt-4 sm:mt-6">
+          <PageHeading
+            heading={heading}
+            onBackClick={hasBackButton ? onBackButtonClick : undefined}
+          />
+          <p className="text-[14px] sm:text-[16px] leading-6 text-gray-600">
+            {description}
+          </p>
+        </div>
+
+        <div className="flex-1">{getComponent()}</div>
+
+        <Footer />
       </div>
-      {getComponent()}
-      <Footer />
     </main>
   )
 }
