@@ -1,4 +1,4 @@
-import { Label, TextField } from '@fileverse/ui'
+import { Label, TextField, TextAreaFieldV2 } from '@fileverse/ui'
 
 type InputProps = {
   label: string
@@ -6,6 +6,8 @@ type InputProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   required?: boolean
   id: string
+  placeholder?: string
+  isTextArea?: boolean
 }
 
 export const Input = ({
@@ -13,6 +15,7 @@ export const Input = ({
   value,
   onChange,
   required = false,
+  placeholder,
   id,
 }: InputProps) => {
   return (
@@ -20,7 +23,14 @@ export const Input = ({
       <Label className="text-body-sm w-[170px]" required={required}>
         {label}
       </Label>
-      <TextField value={value} onChange={onChange} id={id} />
+
+      <TextField
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        id={id}
+        className="bg-white"
+      />
     </div>
   )
 }

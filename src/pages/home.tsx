@@ -89,7 +89,7 @@ const Home = () => {
             heading={heading}
             onBackClick={hasBackButton ? onBackButtonClick : undefined}
           />
-          <p className="text-[14px] sm:text-[16px] leading-6 text-gray-600">
+          <p className="text-[14px] sm:text-[16px] leading-6 text-[#77818A]">
             {description}
           </p>
         </div>

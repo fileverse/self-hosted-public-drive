@@ -206,13 +206,13 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button
+            {/* <button
               onClick={handleDownload}
               className="text-gray-500 hover:text-blue-600"
               title="Download file"
             >
               <LucideIcon name="Download" size="md" />
-            </button>
+            </button> */}
             <button
               onClick={() => setShowDeleteConfirmation(true)}
               className="text-gray-500 hover:text-red-600"
@@ -230,7 +230,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto flex flex-col">
           {isMetadataLoading || isLoading ? (
             <div className="flex-1 flex items-center justify-center bg-gray-50 p-4">
               <div className="flex flex-col items-center gap-3">
@@ -256,7 +256,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
               </div>
 
               {/* Notes Section */}
-              <div className="border-t mt-auto">
+              <div className="border-t sticky bottom-0 bg-gray-50">
                 <button
                   onClick={() => setIsNotesExpanded(!isNotesExpanded)}
                   className="w-full px-4 py-3 flex items-center justify-between text-left"

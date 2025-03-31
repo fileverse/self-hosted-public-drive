@@ -88,9 +88,9 @@ const Portal = () => {
   }
 
   return (
-    <div className="h-full flex">
+    <div className="h-full flex p-6">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-full bg-white min-w-0">
+      <div className="flex-1 flex flex-col min-h-full bg-white min-w-0 rounded-xl">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b flex items-start justify-between">
           <div>
@@ -117,10 +117,10 @@ const Portal = () => {
         {/* Content */}
         <div className="flex-1 overflow-auto">
           {isOwner && (
-            <div className="px-6 pt-6">
+            <div className="pl-6 pt-6">
               <Button
                 onClick={onButtonClick}
-                className="flex items-center justify-center border border-black hover:bg-gray-50 transition-colors rounded-lg p-6 w-[160px] h-[40px] gap-3"
+                className="flex flex-col gap-3 items-start bg-black text-white hover:bg-black/90 transition-colors rounded-xl px-6 py-4 w-[200px] h-auto"
               >
                 <input
                   onChange={onFileChange}
@@ -129,9 +129,9 @@ const Portal = () => {
                   ref={fileInputRef}
                   className="hidden"
                 />
-                <LucideIcon name="Plus" size={'md'} />
-                <span className="text-[14px] font-medium text-white">
-                  Upload File
+                <LucideIcon name="Upload" size="lg" className="text-white" />
+                <span className="text-[16px] font-normal text-white">
+                  Upload files
                 </span>
               </Button>
             </div>
@@ -145,7 +145,7 @@ const Portal = () => {
 
       {/* Preview Panel */}
       {selectedFileForPreview && (
-        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[600px] bg-white border-l border-gray-200 shadow-lg lg:shadow-none z-50">
+        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[700px] bg-white border-l border-gray-200 shadow-lg lg:shadow-xl z-50">
           <FilePreview
             file={selectedFileForPreview}
             onClose={handleClosePreview}

@@ -1,4 +1,4 @@
-import { Button } from '@fileverse/ui'
+import { Button, Label, TextAreaFieldV2 } from '@fileverse/ui'
 import { useState } from 'react'
 import { Input } from './input'
 import { usePortalContext } from '../providers/portal-provider'
@@ -59,15 +59,25 @@ export const CreateNewForm = () => {
           value={inputs.portalName}
           onChange={handleChange}
           id="portalName"
+          placeholder="Portal Name"
           required
         />
-        <Input
-          label="Portal Description"
-          value={inputs.portalDescription}
-          onChange={handleChange}
-          id="portalDescription"
-          required
-        />
+
+        <div className="flex items-start gap-4">
+          <Label className="text-body-sm w-[170px]" required>
+            Portal Description
+          </Label>
+          <textarea
+            placeholder="Portal Description"
+            value={inputs.portalDescription}
+            onChange={(e) =>
+              setInputs({ ...inputs, portalDescription: e.target.value })
+            }
+            id="portalDescription"
+            rows={4}
+            className="bg-white w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-200"
+          />
+        </div>
       </div>
       <hr />
       <div className="flex flex-col gap-4">
@@ -77,6 +87,7 @@ export const CreateNewForm = () => {
           value={inputs.pinataJWT}
           onChange={handleChange}
           id="pinataJWT"
+          placeholder="PinataJWT"
           required
         />
         <Input
@@ -84,6 +95,7 @@ export const CreateNewForm = () => {
           value={inputs.pinataGateway}
           onChange={handleChange}
           id="pinataGateway"
+          placeholder="Gateway"
           required
         />
       </div>
@@ -95,6 +107,7 @@ export const CreateNewForm = () => {
           value={inputs.rpcUrl}
           onChange={handleChange}
           id="rpcUrl"
+          placeholder="RPC URL"
           required
         />
       </div>
@@ -102,10 +115,11 @@ export const CreateNewForm = () => {
       <div className="flex flex-col gap-4">
         <div className="text-heading-sm">Pimlico</div>
         <Input
-          label="Api Key"
+          label="API key"
           value={inputs.pimlicoApiKey}
           onChange={handleChange}
           id="pimlicoApiKey"
+          placeholder="Pimlico API Key"
           required
         />
       </div>

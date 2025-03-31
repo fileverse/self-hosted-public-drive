@@ -6,36 +6,45 @@ export const CreateOrLogin = () => {
   const { setCurrentFlow } = usePortalContext()
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-      <button
-        onClick={() => setCurrentFlow(HomePageFlow.CREATE_NEW)}
-        className="flex-1 p-6 sm:p-8 border rounded-lg hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex flex-col gap-3">
-          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
-            <LucideIcon name="Plus" size="md" className="text-white" />
+    <div className="flex flex-col">
+      {/* Cards */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <button
+          onClick={() => setCurrentFlow(HomePageFlow.LOGIN_TO_PORTAL)}
+          className="bg-white rounded-lg p-6 border border-gray-200 hover:bg-gray-50 transition-all duration-200 text-left"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <LucideIcon name="LogIn" size="md" className="text-gray-900" />
+            <h2 className="text-base font-medium text-gray-900">
+              Log in to my portal
+            </h2>
           </div>
-          <h3 className="text-lg sm:text-xl font-medium">Create New Portal</h3>
-          <p className="text-[14px] sm:text-[16px] text-gray-600 leading-6">
-            Create a new portal to start sharing files securely
-          </p>
-        </div>
-      </button>
-
-      <button
-        onClick={() => setCurrentFlow(HomePageFlow.LOGIN_TO_PORTAL)}
-        className="flex-1 p-6 sm:p-8 border rounded-lg hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex flex-col gap-3">
-          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
-            <LucideIcon name="LogIn" size="md" className="text-white" />
-          </div>
-          <h3 className="text-lg sm:text-xl font-medium">Login to Portal</h3>
-          <p className="text-[14px] sm:text-[16px] text-gray-600 leading-6">
+          <p className="text-sm text-gray-600">
             Access your existing portal and files
           </p>
-        </div>
-      </button>
+        </button>
+
+        <button
+          onClick={() => setCurrentFlow(HomePageFlow.CREATE_NEW)}
+          style={{ backgroundColor: '#000' }}
+          className="rounded-lg p-6 text-left"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <LucideIcon name="Plus" size="md" className="text-white" />
+            <h2 className="text-base font-medium text-white">
+              Create New Portal
+            </h2>
+          </div>
+          <p className="text-sm text-white">
+            Create a new portal to start sharing files securely
+          </p>
+        </button>
+      </div>
+
+      {/* Disclaimer */}
+      <p className="text-xs text-gray-500 mt-2">
+        *Content on this portal is not encrypted and will be public available
+      </p>
     </div>
   )
 }
