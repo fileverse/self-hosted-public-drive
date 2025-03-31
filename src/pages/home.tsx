@@ -8,7 +8,7 @@ import { usePortalContext } from '../providers/portal-provider'
 import { DownloadKeys } from '../components/download-keys'
 import { Login } from '../components/login'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const HEADING_MAP = {
   [HomePageFlow.CREATE_NEW]: 'Portal Creation',
@@ -24,6 +24,9 @@ const DEFAULT_DESCRIPTION =
 const Home = () => {
   const { currentFlow, setCurrentFlow } = usePortalContext()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const accessCode = searchParams.get('CODE')
+  const validCode = import.meta.env.VITE_ACCESS_CODE
 
   useEffect(() => {
     const portalData = localStorage.getItem('portalDetails')
@@ -38,6 +41,17 @@ const Home = () => {
       }
     }
   }, [navigate])
+
+  if (accessCode !== validCode) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-medium mb-2">Access Denied</h1>
+          <p className="text-gray-600">Invalid or missing access code</p>
+        </div>
+      </div>
+    )
+  }
 
   const getComponent = () => {
     switch (currentFlow) {
