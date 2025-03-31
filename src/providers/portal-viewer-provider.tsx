@@ -56,20 +56,21 @@ export const PortalViewerProvider = ({
   const [portalOwner, setPortalOwner] = useState<Hex | null>(null)
   const { agentAddress } = usePortalContext()
 
+  // Get gateway once
+  const gateway = searchParams.get('gateway')
+
   const refreshFiles = useCallback(async () => {
     if (!portalAddress) return
     try {
       setIsLoading(true)
-      const queryGateway = searchParams.get('gateway')
       const portalMetadata = (await getPortalMetadata(
         portalAddress as Hex,
-        queryGateway || undefined
+        gateway || undefined
       )) as unknown as IPortalMetadata
 
       // Override gateway URL from query params if present
-
-      if (queryGateway) {
-        portalMetadata.pinataGateway = queryGateway
+      if (gateway) {
+        portalMetadata.pinataGateway = gateway
       }
 
       const portalOwner = await getPortalOwner(portalAddress as Hex)
@@ -100,16 +101,14 @@ export const PortalViewerProvider = ({
       }
 
       setFiles(newFiles.sort((a, b) => b.createdAt - a.createdAt))
-      console.log(portalMetadata)
       setPortalMetadata(portalMetadata)
-      console.log(portalOwner)
       setPortalOwner(portalOwner as Hex)
     } catch (err) {
       console.error(err)
     } finally {
       setIsLoading(false)
     }
-  }, [portalAddress, searchParams])
+  }, [portalAddress, gateway]) // Only depend on portalAddress and gateway
 
   useEffect(() => {
     refreshFiles()

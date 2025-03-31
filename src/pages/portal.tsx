@@ -1,5 +1,5 @@
 import { Button, LucideIcon } from '@fileverse/ui'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { usePortalContext } from '../providers/portal-provider'
 import {
   PortalViewerProvider,
@@ -9,17 +9,30 @@ import { FileList } from '../components/file-list'
 import { UploadFileModal } from '../components/upload-file-modal'
 import { FilePreview } from '../components/file-preview'
 import { PortalFile } from '../types'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const Portal = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addFile, clearOwnerDetails } = usePortalContext()
-  const { isOwner, updateFileList, portalMetadata } = usePortalViewerContext()
+  const { isOwner, updateFileList, portalMetadata, files } =
+    usePortalViewerContext()
   const navigate = useNavigate()
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedFileForPreview, setSelectedFileForPreview] =
     useState<PortalFile | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const fileId = searchParams.get('fileId')
+
+  // Handle initial file preview from URL
+  useEffect(() => {
+    if (fileId && files) {
+      const fileToPreview = files.find((f) => f.fileId === Number(fileId))
+      if (fileToPreview) {
+        setSelectedFileForPreview(fileToPreview)
+      }
+    }
+  }, [fileId, files])
 
   const onFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -56,6 +69,22 @@ const Portal = () => {
   const handleLogout = () => {
     clearOwnerDetails()
     navigate('/')
+  }
+
+  const handleFileSelect = (file: PortalFile) => {
+    setSelectedFileForPreview(file)
+    // Update URL with fileId
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('fileId', file.fileId.toString())
+    setSearchParams(newParams)
+  }
+
+  const handleClosePreview = () => {
+    setSelectedFileForPreview(null)
+    // Remove fileId from URL
+    const newParams = new URLSearchParams(searchParams)
+    newParams.delete('fileId')
+    setSearchParams(newParams)
   }
 
   return (
@@ -109,7 +138,7 @@ const Portal = () => {
           )}
 
           <div className="mt-6">
-            <FileList onFileSelect={setSelectedFileForPreview} />
+            <FileList onFileSelect={handleFileSelect} />
           </div>
         </div>
       </div>
@@ -119,7 +148,7 @@ const Portal = () => {
         <div className="w-[600px] border-l h-full bg-white">
           <FilePreview
             file={selectedFileForPreview}
-            onClose={() => setSelectedFileForPreview(null)}
+            onClose={handleClosePreview}
           />
         </div>
       )}
