@@ -26,7 +26,12 @@ export const CreateNewForm = () => {
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputs({ ...inputs, [e.target.id]: e.target.value })
+    let value = e.target.value
+    if (e.target.id === 'pinataGateway') {
+      // Remove protocol (http:// or https://) and trailing slashes
+      value = value.replace(/^https?:\/\//, '').replace(/\/+$/, '')
+    }
+    setInputs({ ...inputs, [e.target.id]: value })
   }
 
   const onCreatePortal = async () => {

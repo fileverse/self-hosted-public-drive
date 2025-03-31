@@ -15,7 +15,9 @@ export const DownloadKeys = () => {
   }
 
   const handleGoToPortal = () => {
-    navigate(`/${portalDetails.portalAddress}`)
+    navigate(
+      `/${portalDetails.portalAddress}?gateway=${portalDetails.pinataGateway}`
+    )
   }
   return (
     <div className="flex gap-6">

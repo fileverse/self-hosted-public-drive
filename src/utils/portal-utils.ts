@@ -190,12 +190,18 @@ export const validateOwner = async (
   return privateKeyOwner === portalOwner
 }
 
-export const getPortalMetadata = async (portalAddress: Hex) => {
+export const getPortalMetadata = async (
+  portalAddress: Hex,
+  pinataGateway?: string
+) => {
   const metadataHash = (await publicClient.readContract({
     address: portalAddress,
     abi: portalAbi,
     functionName: 'metadataIPFSHash',
   })) as string
-  const metadata = await getIPFSAsset({ ipfsHash: metadataHash })
+  const metadata = await getIPFSAsset({
+    ipfsHash: metadataHash,
+    gatewayURL: pinataGateway,
+  })
   return metadata
 }

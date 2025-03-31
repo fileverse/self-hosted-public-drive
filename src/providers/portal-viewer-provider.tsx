@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import {
   getContractFile,
   getPortalFileCount,
@@ -39,6 +39,7 @@ export const PortalViewerProvider = ({
   children: React.ReactNode
 }) => {
   const { portalAddress } = useParams()
+  const [searchParams] = useSearchParams()
   const [portalMetadata, setPortalMetadata] = useState<IPortalMetadata | null>(
     null
   )
@@ -52,8 +53,17 @@ export const PortalViewerProvider = ({
       if (!portalAddress) return
       try {
         setIsLoading(true)
-        const portalMetadata = (await getPortalMetadata(portalAddress as Hex))
-          .data as unknown as IPortalMetadata
+        const queryGateway = searchParams.get('gateway')
+        const portalMetadata = (await getPortalMetadata(
+          portalAddress as Hex,
+          queryGateway || undefined
+        )) as unknown as IPortalMetadata
+
+        // Override gateway URL from query params if present
+
+        if (queryGateway) {
+          portalMetadata.pinataGateway = queryGateway
+        }
 
         const portalOwner = await getPortalOwner(portalAddress as Hex)
         const totalFileCount = await getPortalFileCount(portalAddress as Hex)
@@ -92,7 +102,7 @@ export const PortalViewerProvider = ({
       }
     }
     getPortalDetails()
-  }, [portalAddress])
+  }, [portalAddress, searchParams])
 
   const updateFileList = (file: PortalFile) => {
     setFiles((prevFiles) => [file, ...prevFiles])

@@ -29,7 +29,8 @@ export const useUpload = () => {
           decodeURIComponent(e?.target?.result as string)
         )
 
-        const { portalAddress, privateKey, pinataJWT } = fileContent
+        const { portalAddress, privateKey, pinataJWT, pinataGateway } =
+          fileContent
 
         if (!portalAddress || !privateKey || !pinataJWT) {
           setUploadState('incorrect')
@@ -56,6 +57,7 @@ export const useUpload = () => {
         setUploadState('uploaded')
         await setOwnerDetails({
           ...fileContent,
+          pinataGateway: pinataGateway || '',
         })
         setIsOwner(true)
       } catch (err) {
