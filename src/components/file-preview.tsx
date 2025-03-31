@@ -215,11 +215,12 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
             </button> */}
             <button
               onClick={() => setShowDeleteConfirmation(true)}
-              className="text-gray-500 hover:text-red-600"
+              className="text-red-500 hover:text-red-600"
               title="Delete file"
             >
               <LucideIcon name="Trash" size="md" />
             </button>
+            <div className="h-5 w-px bg-gray-200" />
             <button
               onClick={onClose}
               className="hidden lg:block text-gray-500 hover:text-gray-700"
