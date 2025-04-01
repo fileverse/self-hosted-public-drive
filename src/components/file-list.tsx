@@ -62,7 +62,7 @@ const FileListItem = ({
           e.stopPropagation()
         }}
       >
-        <LucideIcon name="MoreVertical" size="md" />
+        <LucideIcon name="EllipsisVertical" size="md" />
       </button>
     </div>
   )

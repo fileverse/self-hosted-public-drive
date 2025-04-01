@@ -10,6 +10,7 @@ import { UploadFileModal } from '../components/upload-file-modal'
 import { FilePreview } from '../components/file-preview'
 import { PortalFile } from '../types'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { EditPortalModal } from '../components/edit-portal-modal'
 
 const Portal = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -23,6 +24,8 @@ const Portal = () => {
     useState<PortalFile | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const fileId = searchParams.get('fileId')
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
 
   // Handle initial file preview from URL
   useEffect(() => {
@@ -33,6 +36,19 @@ const Portal = () => {
       }
     }
   }, [fileId, files])
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('[data-menu]')) {
+        setShowMenu(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   const onFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -103,14 +119,46 @@ const Portal = () => {
           </div>
 
           {isOwner && (
-            <Button
-              variant="secondary"
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-gray-700 !border-gray-200"
-            >
-              <LucideIcon name="LogOut" size="md" />
-              <span>Logout</span>
-            </Button>
+            <div className="relative" data-menu>
+              <Button
+                variant="ghost"
+                className="!p-2 hover:bg-gray-100 rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowMenu(!showMenu)
+                }}
+              >
+                <LucideIcon name="EllipsisVertical" size="md" />
+              </Button>
+
+              {/* Custom Dropdown Menu */}
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setShowEditModal(true)
+                        setShowMenu(false)
+                      }}
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                    >
+                      <LucideIcon name="Pencil" size="sm" className="mr-2" />
+                      Edit Portal
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        setShowMenu(false)
+                      }}
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                    >
+                      <LucideIcon name="LogOut" size="sm" className="mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -166,6 +214,15 @@ const Portal = () => {
             }
           }}
           onUpload={handleUpload}
+        />
+      )}
+
+      {/* Add Edit Modal */}
+      {showEditModal && (
+        <EditPortalModal
+          onClose={() => setShowEditModal(false)}
+          currentName={portalMetadata?.data.name || ''}
+          currentDescription={portalMetadata?.data.description || ''}
         />
       )}
     </div>

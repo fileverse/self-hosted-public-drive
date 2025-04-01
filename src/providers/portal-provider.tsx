@@ -31,6 +31,7 @@ type PortalContextType = {
   agentAddress: Hex | null
   deleteFile: (fileId: number) => Promise<void>
   clearOwnerDetails: () => void
+  updatePortal: (name: string, description: string) => Promise<void>
 }
 
 const PortalContext = createContext<PortalContextType>({
@@ -43,6 +44,7 @@ const PortalContext = createContext<PortalContextType>({
   agentAddress: null,
   deleteFile: async () => {},
   clearOwnerDetails: () => {},
+  updatePortal: async () => {},
 })
 
 export const usePortalContext = () => {
@@ -246,6 +248,49 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
     if (parsedLog.length === 0) throw new Error('Failed to delete file')
   }
 
+  const updatePortal = async (name: string, description: string) => {
+    if (!pinataSDK || !portalDetails || !agentInstance)
+      throw new Error('Not initialized')
+
+    const portalMetadata = {
+      name,
+      description,
+      pinataGateway: portalDetails.pinataGateway,
+    }
+
+    // Upload new metadata to IPFS
+    const { cid } = await pinataSDK.upload.public.json(portalMetadata, {
+      metadata: {
+        name: `${name}.json`,
+      },
+    })
+
+    // Call contract to update metadata
+    const callData = encodeFunctionData({
+      abi: portalAbi,
+      functionName: 'updateMetadata',
+      args: [cid],
+    })
+
+    const { success } = await agentInstance.executeUserOperationRequest(
+      {
+        data: callData,
+        contractAddress: portalDetails.portalAddress,
+      },
+      FILE_TRX_TIMEOUT
+    )
+
+    if (!success) throw new Error('Failed to update portal')
+
+    // Update local storage with new details
+    const updatedDetails = {
+      ...portalDetails,
+      name,
+      description,
+    }
+    await setOwnerDetails(updatedDetails)
+  }
+
   return (
     <PortalContext.Provider
       value={{
@@ -258,6 +303,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
         agentAddress,
         deleteFile,
         clearOwnerDetails,
+        updatePortal,
       }}
     >
       {children}
