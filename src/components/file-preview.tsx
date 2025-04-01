@@ -4,6 +4,7 @@ import { usePortalViewerContext } from '../providers/portal-viewer-provider'
 import { LucideIcon } from '@fileverse/ui'
 import { usePortalContext } from '../providers/portal-provider'
 import { DeleteConfirmationModal } from './delete-confirmation-modal'
+import { RenameFileModal } from './rename-file-modal'
 
 type FilePreviewProps = {
   file: PortalFile
@@ -12,7 +13,7 @@ type FilePreviewProps = {
 
 export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   const { portalMetadata, refreshFiles, isOwner } = usePortalViewerContext()
-  const { deleteFile } = usePortalContext()
+  const { deleteFile, updateFileName } = usePortalContext()
   const [isLoading, setIsLoading] = useState(true)
   const [content, setContent] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -21,6 +22,8 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   const [isMetadataLoading, setIsMetadataLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [showRenameModal, setShowRenameModal] = useState(false)
+  const [isRenaming, setIsRenaming] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -164,6 +167,24 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
     }
   }
 
+  const handleRename = async (newName: string) => {
+    try {
+      setIsRenaming(true)
+      await updateFileName(
+        file.fileId,
+        newName,
+        file.metadataHash,
+        file.contentHash
+      )
+      setShowRenameModal(false)
+      refreshFiles?.()
+    } catch (error) {
+      console.error('Failed to rename file:', error)
+    } finally {
+      setIsRenaming(false)
+    }
+  }
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
@@ -175,15 +196,23 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
           >
             <LucideIcon name="ArrowLeft" size="md" />
           </button>
-          <div>
+          <div className="flex items-center gap-2">
             <h1 className="text-base font-medium text-gray-900">
               {fileMetadata?.name || file.name}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="uppercase">{file.fileType.split('/')[1]}</span>
-              <span>•</span>
-              <span>{(file.fileSize / 1024).toFixed(2)} KB</span>
-            </div>
+            {isOwner && (
+              <button
+                onClick={() => setShowRenameModal(true)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <LucideIcon name="Pencil" size="sm" />
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <span className="uppercase">{file.fileType.split('/')[1]}</span>
+            <span>•</span>
+            <span>{(file.fileSize / 1024).toFixed(2)} KB</span>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -257,6 +286,16 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
           </>
         )}
       </div>
+
+      {/* Add RenameModal */}
+      {showRenameModal && (
+        <RenameFileModal
+          fileName={fileMetadata?.name || file.name}
+          onClose={() => setShowRenameModal(false)}
+          onRename={handleRename}
+          isRenaming={isRenaming}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirmation && (
