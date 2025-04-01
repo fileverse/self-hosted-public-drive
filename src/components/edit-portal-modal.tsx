@@ -1,4 +1,4 @@
-import { LucideIcon } from '@fileverse/ui'
+import { Button, LucideIcon } from '@fileverse/ui'
 import { useState } from 'react'
 import { usePortalContext } from '../providers/portal-provider'
 import { usePortalViewerContext } from '../providers/portal-viewer-provider'
@@ -81,24 +81,17 @@ export const EditPortalModal = ({
 
           {/* Footer - make it more visible */}
           <div className="border-t p-4 flex justify-end gap-3 bg-gray-50 rounded-b-xl">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
-            >
+            <Button variant="secondary" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium hover:bg-black/90 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            </Button>
+            <Button onClick={handleSubmit} disabled={isLoading}>
               {isLoading && (
                 <div className="animate-spin">
                   <LucideIcon name="Loader2" size="sm" />
                 </div>
               )}
               Save Changes
-            </button>
+            </Button>
           </div>
         </div>
       </div>

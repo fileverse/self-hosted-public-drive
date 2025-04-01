@@ -114,73 +114,45 @@ const Portal = () => {
   return (
     <div className="h-full flex p-6">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-full bg-white min-w-0 rounded-xl">
+      <div className="flex-1 flex flex-col min-h-full min-w-0 rounded-xl">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 flex items-start justify-between">
-          <div>
+          <div className="flex items-start items-center gap-3">
             <h1 className="text-[24px] leading-8 font-medium text-gray-900 mb-1">
               {portalMetadata?.data.name}
             </h1>
-            <div className="text-[14px] leading-5 text-gray-600">
-              {portalMetadata?.data.description && (
-                <div className="flex gap-1">
-                  <p>{truncateText(portalMetadata.data.description, 100)}</p>
-                  {portalMetadata.data.description.length > 100 && (
-                    <button
-                      onClick={() => setShowDescriptionModal(true)}
-                      className="font-medium shrink-0"
-                      style={{ color: '#5C0AFF' }}
-                    >
-                      Show more
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+            {isOwner && (
+              <button onClick={() => setShowEditModal(true)}>
+                <LucideIcon name="Pencil" size="sm" />
+              </button>
+            )}
           </div>
 
           {isOwner && (
-            <div className="relative" data-menu>
-              <Button
-                variant="ghost"
-                className="!p-2 hover:bg-gray-100 rounded-full"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowMenu(!showMenu)
-                }}
-              >
-                <LucideIcon name="EllipsisVertical" size="md" />
-              </Button>
-
-              {/* Custom Dropdown Menu */}
-              {showMenu && (
-                <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        setShowEditModal(true)
-                        setShowMenu(false)
-                      }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
-                    >
-                      <LucideIcon name="Pencil" size="sm" className="mr-2" />
-                      Edit Portal
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleLogout()
-                        setShowMenu(false)
-                      }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
-                    >
-                      <LucideIcon name="LogOut" size="sm" className="mr-2" />
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <Button variant="secondary" onClick={handleLogout}>
+              <LucideIcon name="LogOut" size="sm" />
+              <span>&nbsp; Log out</span>
+            </Button>
           )}
+        </div>
+
+        <div className="px-6 pb-4 border-b">
+          <div className="text-[14px] leading-5 text-gray-600">
+            {portalMetadata?.data.description && (
+              <div className="flex gap-1">
+                <p>{truncateText(portalMetadata.data.description, 100)}</p>
+                {portalMetadata.data.description.length > 100 && (
+                  <button
+                    onClick={() => setShowDescriptionModal(true)}
+                    className="font-medium shrink-0"
+                    style={{ color: '#5C0AFF' }}
+                  >
+                    Show more
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content */}
