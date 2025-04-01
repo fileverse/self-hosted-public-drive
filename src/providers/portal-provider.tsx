@@ -32,6 +32,12 @@ type PortalContextType = {
   deleteFile: (fileId: number) => Promise<void>
   clearOwnerDetails: () => void
   updatePortal: (name: string, description: string) => Promise<void>
+  updateFileName: (
+    fileId: number,
+    newName: string,
+    currentMetadataHash: string,
+    currentContentHash: string
+  ) => Promise<void>
 }
 
 const PortalContext = createContext<PortalContextType>({
@@ -45,6 +51,7 @@ const PortalContext = createContext<PortalContextType>({
   deleteFile: async () => {},
   clearOwnerDetails: () => {},
   updatePortal: async () => {},
+  updateFileName: async () => {},
 })
 
 export const usePortalContext = () => {
@@ -291,6 +298,73 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
     await setOwnerDetails(updatedDetails)
   }
 
+  const updateFileName = async (
+    fileId: number,
+    newName: string,
+    currentMetadataHash: string,
+    currentContentHash: string
+  ) => {
+    if (!pinataSDK || !portalDetails || !agentInstance)
+      throw new Error('Not initialized')
+
+    try {
+      // Ensure gateway URL is properly formatted
+      const gateway = portalDetails.pinataGateway.startsWith('https://')
+        ? portalDetails.pinataGateway
+        : `https://${portalDetails.pinataGateway}`
+
+      // Fetch existing metadata from IPFS
+      const response = await fetch(`${gateway}/ipfs/${currentMetadataHash}`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch metadata: ${response.statusText}`)
+      }
+
+      let metadata
+      try {
+        metadata = await response.json()
+      } catch (e) {
+        throw new Error('Failed to parse metadata JSON from IPFS')
+      }
+
+      // Update the name in the metadata
+      const updatedMetadata = {
+        ...metadata,
+        name: newName,
+      }
+
+      // Upload the updated metadata to IPFS
+      const { cid: newMetadataHash } = await pinataSDK.upload.public.json(
+        updatedMetadata,
+        {
+          metadata: {
+            name: `${newName}_metadata.json`,
+          },
+        }
+      )
+
+      // Update the contract with the new metadata CID
+      const callData = encodeFunctionData({
+        abi: portalAbi,
+        functionName: 'editFile',
+        args: [fileId, newMetadataHash, currentContentHash, '', 0, 0],
+      })
+
+      const { success } = await agentInstance.executeUserOperationRequest(
+        {
+          data: callData,
+          contractAddress: portalDetails.portalAddress,
+        },
+        FILE_TRX_TIMEOUT
+      )
+
+      if (!success) throw new Error('Failed to update file name')
+    } catch (error) {
+      console.error('Failed to update file name:', error)
+      throw error
+    }
+  }
+
   return (
     <PortalContext.Provider
       value={{
@@ -304,6 +378,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
         deleteFile,
         clearOwnerDetails,
         updatePortal,
+        updateFileName,
       }}
     >
       {children}

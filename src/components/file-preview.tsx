@@ -164,26 +164,6 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
     }
   }
 
-  // const handleDownload = async () => {
-  //   const fileUrl = getFileUrl()
-  //   if (!fileUrl) return
-
-  //   try {
-  //     const response = await fetch(fileUrl)
-  //     const blob = await response.blob()
-  //     const url = window.URL.createObjectURL(blob)
-  //     const a = document.createElement('a')
-  //     a.href = url
-  //     a.download = file.name
-  //     document.body.appendChild(a)
-  //     a.click()
-  //     window.URL.revokeObjectURL(url)
-  //     document.body.removeChild(a)
-  //   } catch (error) {
-  //     console.error('Failed to download file:', error)
-  //   }
-  // }
-
   return (
     <>
       <div className="h-full flex flex-col bg-white">
