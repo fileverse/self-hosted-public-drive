@@ -14,9 +14,11 @@ type FileListProps = {
 }
 
 export const FileList = ({ onFileSelect }: FileListProps) => {
-  const { isLoading, files } = usePortalViewerContext()
+  const { isLoadingFiles, files } = usePortalViewerContext()
 
-  if (isLoading) return <FileListLoader />
+  if (isLoadingFiles) {
+    return <FileListLoader />
+  }
 
   // Filter out deleted files and sort by fileId in ascending order
   const activeFiles = files

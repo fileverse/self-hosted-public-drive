@@ -20,6 +20,7 @@ import { usePortalContext } from './portal-provider'
 type PortalViewerContextType = {
   portalMetadata: IPortalMetadata | null
   isLoading: boolean
+  isLoadingFiles: boolean
   files: PortalFile[]
   portalOwner: Hex | null
   isOwner: boolean
@@ -30,6 +31,7 @@ type PortalViewerContextType = {
 const PortalViewerContext = createContext<PortalViewerContextType>({
   portalMetadata: null,
   isLoading: false,
+  isLoadingFiles: false,
   files: [],
   portalOwner: null,
   isOwner: false,
@@ -52,6 +54,7 @@ export const PortalViewerProvider = ({
     null
   )
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingFiles, setIsLoadingFiles] = useState(false)
   const [files, setFiles] = useState<PortalFile[]>([])
   const [portalOwner, setPortalOwner] = useState<Hex | null>(null)
   const { agentAddress } = usePortalContext()
@@ -63,7 +66,8 @@ export const PortalViewerProvider = ({
     if (!portalAddress) return
     try {
       setIsLoading(true)
-      setFiles([]) // Reset files state at start
+      setIsLoadingFiles(true)
+      setFiles([])
 
       const portalMetadata = (await getPortalMetadata(
         portalAddress as Hex,
@@ -81,7 +85,6 @@ export const PortalViewerProvider = ({
       setPortalOwner(portalOwner as Hex)
       setIsLoading(false)
 
-      // Create a Map to track unique files by fileId
       const filesMap = new Map<number, PortalFile>()
 
       const filePromises = Array.from(
@@ -117,19 +120,20 @@ export const PortalViewerProvider = ({
         }
       )
 
-      // Process files one by one as they complete
       for (const filePromise of filePromises) {
         const file = await filePromise
-        if (file && !filesMap.has(file.fileId)) {
+        if (file) {
           filesMap.set(file.fileId, file)
           setFiles(
             Array.from(filesMap.values()).sort((a, b) => a.fileId - b.fileId)
           )
         }
       }
+      setIsLoadingFiles(false)
     } catch (err) {
       console.error(err)
       setIsLoading(false)
+      setIsLoadingFiles(false)
     }
   }, [portalAddress, gateway])
 
@@ -146,6 +150,7 @@ export const PortalViewerProvider = ({
       value={{
         portalMetadata,
         isLoading,
+        isLoadingFiles,
         files,
         portalOwner,
         isOwner: Boolean(agentAddress && agentAddress === portalOwner),
