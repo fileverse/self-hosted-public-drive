@@ -93,7 +93,9 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
 
     if (file.fileType.startsWith('text/')) {
       return content ? (
-        <div className="text-[14px] leading-6 text-gray-700">{content}</div>
+        <div className="text-[14px] leading-6 text-gray-700 overflow-auto">
+          <div className="whitespace-pre-wrap font-sans p-4">{content}</div>
+        </div>
       ) : null
     }
 
