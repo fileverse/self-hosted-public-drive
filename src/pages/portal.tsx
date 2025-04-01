@@ -98,53 +98,55 @@ const Portal = () => {
   }
 
   return (
-    <div className="h-full flex p-6">
+    <div className="h-full flex p-2 md:p-6 lg:p-6">
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-full min-w-0 rounded-xl">
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 flex items-start justify-between">
-          <div className="flex items-start items-center gap-3">
-            <h1 className="text-[24px] leading-8 font-medium text-gray-900 mb-1">
-              {portalMetadata?.data.name}
-            </h1>
+        {/* Fixed Header Section */}
+        <div className="sticky top-0 z-10">
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4 flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-[24px] leading-8 font-medium text-gray-900">
+                {portalMetadata?.data.name}
+              </h1>
+              {isOwner && (
+                <button onClick={() => setShowEditModal(true)}>
+                  <LucideIcon name="Pencil" size="sm" />
+                </button>
+              )}
+            </div>
+
             {isOwner && (
-              <button onClick={() => setShowEditModal(true)}>
-                <LucideIcon name="Pencil" size="sm" />
-              </button>
+              <Button variant="secondary" onClick={handleLogout}>
+                <LucideIcon name="LogOut" size="sm" />
+                <span>&nbsp; Log out</span>
+              </Button>
             )}
           </div>
 
-          {isOwner && (
-            <Button variant="secondary" onClick={handleLogout}>
-              <LucideIcon name="LogOut" size="sm" />
-              <span>&nbsp; Log out</span>
-            </Button>
-          )}
-        </div>
-
-        <div className="px-6 pb-4 border-b">
-          <div className="text-[14px] leading-5 text-gray-600">
-            {portalMetadata?.data.description && (
-              <div className="flex gap-1">
-                <p>{truncateText(portalMetadata.data.description, 100)}</p>
-                {portalMetadata.data.description.length > 100 && (
-                  <button
-                    onClick={() => setShowDescriptionModal(true)}
-                    className="font-medium shrink-0"
-                    style={{ color: '#5C0AFF' }}
-                  >
-                    Show more
-                  </button>
-                )}
-              </div>
-            )}
+          {/* Description */}
+          <div className="px-6 pb-4 border-b">
+            <div className="text-[14px] leading-5 text-gray-600">
+              {portalMetadata?.data.description && (
+                <div className="flex gap-1">
+                  <p>{truncateText(portalMetadata.data.description, 100)}</p>
+                  {portalMetadata.data.description.length > 100 && (
+                    <button
+                      onClick={() => setShowDescriptionModal(true)}
+                      className="font-medium shrink-0"
+                      style={{ color: '#5C0AFF' }}
+                    >
+                      Show more
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-auto">
+          {/* Upload Button Section */}
           {isOwner && (
-            <div className="pl-6 pt-6">
+            <div className="pl-6 pt-6 pb-6">
               <Button
                 onClick={onButtonClick}
                 className="flex flex-col gap-3 items-start bg-black text-white hover:bg-black/90 transition-colors rounded-xl px-6 py-4 w-[200px] h-auto"
@@ -163,10 +165,11 @@ const Portal = () => {
               </Button>
             </div>
           )}
+        </div>
 
-          <div className="mt-6">
-            <FileList onFileSelect={handleFileSelect} />
-          </div>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-auto">
+          <FileList onFileSelect={handleFileSelect} />
         </div>
       </div>
 

@@ -18,12 +18,12 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
 
   if (isLoading) return <FileListLoader />
 
-  // Filter out deleted files and sort by fileId in descending order
+  // Filter out deleted files and sort by fileId in ascending order
   const activeFiles = files
     .filter(
       (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
     )
-    .sort((a, b) => b.fileId - a.fileId) // Sort by fileId in descending order
+    .sort((a, b) => a.fileId - b.fileId) // Changed sorting order here
 
   const fileList = activeFiles.map((file) => (
     <FileListItem
