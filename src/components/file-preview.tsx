@@ -165,100 +165,97 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   }
 
   return (
-    <>
-      <div className="h-full flex flex-col bg-white">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={onClose}
-              className="lg:hidden text-gray-500 hover:text-gray-700 mr-2"
-            >
-              <LucideIcon name="ArrowLeft" size="md" />
-            </button>
-            <div>
-              <div className="text-xs text-gray-600 uppercase">
-                {file.fileType.split('/')[1]}
-              </div>
-              <div className="text-xs text-gray-500">
-                • {(file.fileSize / 1024).toFixed(2)} KB
-              </div>
+    <div className="h-full flex flex-col bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onClose}
+            className="lg:hidden text-gray-500 hover:text-gray-700 mr-2"
+          >
+            <LucideIcon name="ArrowLeft" size="md" />
+          </button>
+          <div>
+            <h1 className="text-base font-medium text-gray-900">
+              {fileMetadata?.name || file.name}
+            </h1>
+            <div className="flex items-center gap-2 text-xs text-gray-600">
+              <span className="uppercase">{file.fileType.split('/')[1]}</span>
+              <span>•</span>
+              <span>{(file.fileSize / 1024).toFixed(2)} KB</span>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* <button
-              onClick={handleDownload}
-              className="text-gray-500 hover:text-blue-600"
-              title="Download file"
-            >
-              <LucideIcon name="Download" size="md" />
-            </button> */}
-            {isOwner && (
-              <button
-                onClick={() => setShowDeleteConfirmation(true)}
-                className="text-red-500 hover:text-red-600"
-                title="Delete file"
-              >
-                <LucideIcon name="Trash" size="md" />
-              </button>
-            )}
-            <div className="h-5 w-px bg-gray-200" />
-            <button
-              onClick={onClose}
-              className="hidden lg:block text-gray-500 hover:text-gray-700"
-            >
-              <LucideIcon name="X" size="md" />
-            </button>
           </div>
         </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-auto flex flex-col">
-          {isMetadataLoading || isLoading ? (
-            <div className="flex-1 flex items-center justify-center bg-gray-50 p-4">
-              <div className="flex flex-col items-center gap-3">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-b-gray-800" />
-                <div className="text-sm text-gray-600">Loading...</div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex-1 overflow-auto p-4 sm:p-6">
-                <h1 className="text-lg sm:text-xl font-medium mb-4">
-                  {fileMetadata?.name || file.name}
-                </h1>
-                {error ? (
-                  <div className="flex items-center justify-center py-8 text-red-500">
-                    {error}
-                  </div>
-                ) : (
-                  <div className="max-w-full overflow-hidden">
-                    {renderPreview()}
-                  </div>
-                )}
-              </div>
-
-              {/* Notes Section */}
-              <div className="border-t sticky bottom-0 bg-gray-50">
-                <button
-                  onClick={() => setIsNotesExpanded(!isNotesExpanded)}
-                  className="w-full px-4 py-3 flex items-center justify-between text-left"
-                >
-                  <span className="font-medium">Notes</span>
-                  <LucideIcon
-                    name={isNotesExpanded ? 'ChevronUp' : 'ChevronDown'}
-                    size="md"
-                  />
-                </button>
-                {isNotesExpanded && (
-                  <div className="px-4 pb-4 text-sm text-gray-600">
-                    {fileMetadata?.notes || 'No notes available'}
-                  </div>
-                )}
-              </div>
-            </>
+        <div className="flex items-center gap-4">
+          {/* <button
+            onClick={handleDownload}
+            className="text-gray-500 hover:text-blue-600"
+            title="Download file"
+          >
+            <LucideIcon name="Download" size="md" />
+          </button> */}
+          {isOwner && (
+            <button
+              onClick={() => setShowDeleteConfirmation(true)}
+              className="text-red-500 hover:text-red-600"
+              title="Delete file"
+            >
+              <LucideIcon name="Trash" size="md" />
+            </button>
           )}
+          <div className="h-5 w-px bg-gray-200" />
+          <button
+            onClick={onClose}
+            className="hidden lg:block text-gray-500 hover:text-gray-700"
+          >
+            <LucideIcon name="X" size="md" />
+          </button>
         </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto flex flex-col">
+        {isMetadataLoading || isLoading ? (
+          <div className="flex-1 flex items-center justify-center bg-gray-50 p-4">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-b-gray-800" />
+              <div className="text-sm text-gray-600">Loading...</div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex-1 overflow-auto p-4 sm:p-6">
+              {error ? (
+                <div className="flex items-center justify-center py-8 text-red-500">
+                  {error}
+                </div>
+              ) : (
+                <div className="max-w-full overflow-hidden">
+                  {renderPreview()}
+                </div>
+              )}
+            </div>
+
+            {/* Notes Section */}
+            <div className="border-t sticky bottom-0 bg-[#F8F9FA]">
+              <button
+                onClick={() => setIsNotesExpanded(!isNotesExpanded)}
+                className="w-full px-4 py-3 flex items-center justify-between text-left"
+              >
+                <span className="font-medium">Notes</span>
+                <LucideIcon
+                  name={isNotesExpanded ? 'ChevronUp' : 'ChevronDown'}
+                  size="md"
+                />
+              </button>
+              {isNotesExpanded && (
+                <div className="px-4 pb-4 text-sm text-gray-600">
+                  {fileMetadata?.notes || 'No notes available'}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -270,6 +267,6 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
           onConfirm={handleDelete}
         />
       )}
-    </>
+    </div>
   )
 }
