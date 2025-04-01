@@ -32,7 +32,6 @@ const Portal = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const fileId = searchParams.get('fileId')
   const [showEditModal, setShowEditModal] = useState(false)
-  const [showMenu, setShowMenu] = useState(false)
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
 
   // Handle initial file preview from URL
@@ -44,19 +43,6 @@ const Portal = () => {
       }
     }
   }, [fileId, files])
-
-  // Add click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (!target.closest('[data-menu]')) {
-        setShowMenu(false)
-      }
-    }
-
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [])
 
   const onFileSelect = (file: File) => {
     setSelectedFile(file)
