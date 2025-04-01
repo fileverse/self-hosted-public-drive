@@ -102,6 +102,11 @@ export const useUpload = () => {
     inputRef?.current?.click()
   }
 
+  const handleRemoveFile = () => {
+    setFile(null)
+    setUploadState('idle')
+  }
+
   return {
     handleChange,
     handleDrag,
@@ -114,5 +119,6 @@ export const useUpload = () => {
     file,
     isOwner,
     inputRef,
+    handleRemoveFile,
   }
 }

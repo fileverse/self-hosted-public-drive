@@ -116,7 +116,7 @@ const Portal = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-full bg-white min-w-0 rounded-xl">
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b flex items-start justify-between">
+        <div className="px-6 pt-6 pb-4 flex items-start justify-between">
           <div>
             <h1 className="text-[24px] leading-8 font-medium text-gray-900 mb-1">
               {portalMetadata?.data.name}
@@ -198,7 +198,7 @@ const Portal = () => {
                   ref={fileInputRef}
                   className="hidden"
                 />
-                <LucideIcon name="Upload" size="lg" className="text-white" />
+                <LucideIcon name="Upload" size="md" className="text-white" />
                 <span className="text-[16px] font-normal text-white">
                   Upload files
                 </span>

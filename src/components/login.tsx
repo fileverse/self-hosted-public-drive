@@ -3,6 +3,8 @@ import { FileIcon } from '../assets/icons'
 import { useUpload } from '../hooks/use-upload'
 import { usePortalContext } from '../providers/portal-provider'
 import { useNavigate } from 'react-router-dom'
+import { LucideIcon } from '@fileverse/ui'
+
 export const Login = () => {
   const { portalDetails } = usePortalContext()
   const navigate = useNavigate()
@@ -16,6 +18,7 @@ export const Login = () => {
     inputRef,
     file,
     isOwner,
+    handleRemoveFile,
   } = useUpload()
 
   const onLoginToPortal = () => {
@@ -65,8 +68,8 @@ export const Login = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-2 py-2 sm:px-8 sm:py-12">
-      <h2 className="text-[18px] sm:text-[24px] leading-7 sm:leading-8 font-medium mb-8">
+    <div className="max-w-3xl mx-auto">
+      <h2 className="text-[18px] sm:text-[24px] leading-7 sm:leading-8 font-medium pb-4">
         Upload your Backup Keys
       </h2>
 
@@ -101,8 +104,7 @@ export const Login = () => {
       </div>
 
       {file && (
-        <div className="mt-8">
-          <hr className="mb-6 border-gray-200" />
+        <div className="mt-2">
           <div className="p-4 hover:bg-gray-50 transition-colors duration-200 rounded-xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -118,13 +120,26 @@ export const Login = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center">{getStatusDisplay()}</div>
+              <div className="flex items-center gap-3">
+                {getStatusDisplay()}
+                <button
+                  onClick={() => {
+                    if (inputRef.current) inputRef.current.value = ''
+                    handleRemoveFile()
+                  }}
+                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+                >
+                  <LucideIcon name="X" size="sm" />
+                </button>
+              </div>
             </div>
           </div>
+          <hr className="mb-6 border-gray-50" />
+
           <Button
             disabled={!isOwner}
             onClick={onLoginToPortal}
-            className="w-full mt-6 p-4 sm:p-5 text-[16px] font-medium"
+            className="w-full mt-5 p-4 sm:p-5 text-[16px]"
           >
             Login to portal
           </Button>
