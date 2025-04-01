@@ -160,7 +160,7 @@ const Portal = () => {
           </div>
 
           {/* Description */}
-          <div className="px-6 pb-4 border-b">
+          <div className="px-6 pb-4">
             <div className="text-[14px] leading-5 text-gray-600">
               {portalMetadata?.data.description && (
                 <div className="flex gap-1">
