@@ -11,8 +11,15 @@ import { FilePreview } from '../components/file-preview'
 import { PortalFile } from '../types'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { EditPortalModal } from '../components/edit-portal-modal'
+import { DescriptionModal } from '../components/description-modal'
 
 const Portal = () => {
+  // Add this helper function right after the component declaration
+  const truncateText = (text: string, maxLength: number) => {
+    if (!text || text.length <= maxLength) return text
+    return text.slice(0, maxLength) + '...'
+  }
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addFile, clearOwnerDetails } = usePortalContext()
   const { isOwner, updateFileList, portalMetadata, files } =
@@ -26,6 +33,7 @@ const Portal = () => {
   const fileId = searchParams.get('fileId')
   const [showEditModal, setShowEditModal] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false)
 
   // Handle initial file preview from URL
   useEffect(() => {
@@ -113,9 +121,22 @@ const Portal = () => {
             <h1 className="text-[24px] leading-8 font-medium text-gray-900 mb-1">
               {portalMetadata?.data.name}
             </h1>
-            <p className="text-[14px] leading-5 text-gray-600">
-              {portalMetadata?.data.description}
-            </p>
+            <div className="text-[14px] leading-5 text-gray-600">
+              {portalMetadata?.data.description && (
+                <div className="flex gap-1">
+                  <p>{truncateText(portalMetadata.data.description, 100)}</p>
+                  {portalMetadata.data.description.length > 100 && (
+                    <button
+                      onClick={() => setShowDescriptionModal(true)}
+                      className="font-medium shrink-0"
+                      style={{ color: '#5C0AFF' }}
+                    >
+                      Show more
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {isOwner && (
@@ -223,6 +244,15 @@ const Portal = () => {
           onClose={() => setShowEditModal(false)}
           currentName={portalMetadata?.data.name || ''}
           currentDescription={portalMetadata?.data.description || ''}
+        />
+      )}
+
+      {/* Description Modal */}
+      {showDescriptionModal && (
+        <DescriptionModal
+          onClose={() => setShowDescriptionModal(false)}
+          title={portalMetadata?.data.name || ''}
+          description={portalMetadata?.data.description || ''}
         />
       )}
     </div>
