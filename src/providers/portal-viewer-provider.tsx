@@ -63,52 +63,75 @@ export const PortalViewerProvider = ({
     if (!portalAddress) return
     try {
       setIsLoading(true)
+      setFiles([]) // Reset files state at start
+
       const portalMetadata = (await getPortalMetadata(
         portalAddress as Hex,
         gateway || undefined
       )) as unknown as IPortalMetadata
 
-      // Override gateway URL from query params if present
       if (gateway) {
         portalMetadata.pinataGateway = gateway
       }
 
       const portalOwner = await getPortalOwner(portalAddress as Hex)
       const totalFileCount = await getPortalFileCount(portalAddress as Hex)
-      const newFiles = []
-      for (let i = 0; i < totalFileCount; i++) {
-        const { metadataHash, contentHash } = await getContractFile(
-          i,
-          portalAddress as Hex
-        )
-        const fileMetadata = (
-          await getIPFSAsset({
-            ipfsHash: metadataHash,
-            gatewayURL: portalMetadata.pinataGateway,
-          })
-        ).data
 
-        newFiles.push({
-          metadataHash,
-          contentHash,
-          fileId: i,
-          fileType: fileMetadata.fileType,
-          fileSize: fileMetadata.fileSize,
-          name: fileMetadata.name,
-          extension: fileMetadata.extension,
-          createdAt: fileMetadata.createdAt,
-        } as PortalFile)
-      }
-
-      setFiles(newFiles.sort((a, b) => b.createdAt - a.createdAt))
       setPortalMetadata(portalMetadata)
       setPortalOwner(portalOwner as Hex)
+      setIsLoading(false)
+
+      // Create a Map to track unique files by fileId
+      const filesMap = new Map<number, PortalFile>()
+
+      const filePromises = Array.from(
+        { length: totalFileCount },
+        async (_, i) => {
+          try {
+            const { metadataHash, contentHash } = await getContractFile(
+              i,
+              portalAddress as Hex
+            )
+
+            const fileMetadata = (
+              await getIPFSAsset({
+                ipfsHash: metadataHash,
+                gatewayURL: portalMetadata.pinataGateway,
+              })
+            ).data
+
+            return {
+              metadataHash,
+              contentHash,
+              fileId: i,
+              fileType: fileMetadata.fileType,
+              fileSize: fileMetadata.fileSize,
+              name: fileMetadata.name,
+              extension: fileMetadata.extension,
+              createdAt: fileMetadata.createdAt,
+            } as PortalFile
+          } catch (err) {
+            console.error(`Failed to fetch file ${i}:`, err)
+            return null
+          }
+        }
+      )
+
+      // Process files one by one as they complete
+      for (const filePromise of filePromises) {
+        const file = await filePromise
+        if (file && !filesMap.has(file.fileId)) {
+          filesMap.set(file.fileId, file)
+          setFiles(
+            Array.from(filesMap.values()).sort((a, b) => a.fileId - b.fileId)
+          )
+        }
+      }
     } catch (err) {
       console.error(err)
-    } finally {
       setIsLoading(false)
     }
-  }, [portalAddress, gateway]) // Only depend on portalAddress and gateway
+  }, [portalAddress, gateway])
 
   useEffect(() => {
     refreshFiles()
