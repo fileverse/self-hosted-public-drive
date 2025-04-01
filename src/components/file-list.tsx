@@ -18,10 +18,12 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
 
   if (isLoading) return <FileListLoader />
 
-  // Filter out deleted files
-  const activeFiles = files.filter(
-    (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
-  )
+  // Filter out deleted files and sort by fileId in descending order
+  const activeFiles = files
+    .filter(
+      (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
+    )
+    .sort((a, b) => b.fileId - a.fileId) // Sort by fileId in descending order
 
   const fileList = activeFiles.map((file) => (
     <FileListItem
@@ -115,7 +117,7 @@ const FileListItem = ({
         {isOwner && (
           <div className="relative" data-menu>
             <button
-              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all duration-200 p-1"
+              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-900 transition-all duration-200 p-1"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowMenu(!showMenu)
