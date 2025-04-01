@@ -127,7 +127,7 @@ const FileListItem = ({
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-1 w-36 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+              <div className="absolute right-0 mt-1 w-36 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-[60]">
                 <div className="py-1">
                   <button
                     onClick={(e) => {

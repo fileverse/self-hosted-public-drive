@@ -12,6 +12,7 @@ import { PortalFile } from '../types'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { EditPortalModal } from '../components/edit-portal-modal'
 import { DescriptionModal } from '../components/description-modal'
+import { DELETE_FILE_METADATA } from '../utils/constants'
 
 const Portal = () => {
   // Add this helper function right after the component declaration
@@ -33,6 +34,8 @@ const Portal = () => {
   const fileId = searchParams.get('fileId')
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
+  const [hasManuallyClosedPreview, setHasManuallyClosedPreview] =
+    useState(false)
 
   // Handle initial file preview from URL
   useEffect(() => {
@@ -43,6 +46,27 @@ const Portal = () => {
       }
     }
   }, [fileId, files])
+
+  // Add this effect after other useEffect hooks
+  useEffect(() => {
+    // Change !fileId to fileId === null to properly handle 0
+    if (files?.length > 0 && fileId === null && !hasManuallyClosedPreview) {
+      const activeFiles = files
+        .filter(
+          (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
+        )
+        .sort((a, b) => a.fileId - b.fileId)
+
+      const oldestFile = activeFiles[0]
+
+      if (oldestFile) {
+        const newParams = new URLSearchParams(searchParams)
+        newParams.set('fileId', oldestFile.fileId.toString())
+        setSearchParams(newParams)
+        setSelectedFileForPreview(oldestFile)
+      }
+    }
+  }, [files, fileId, searchParams, setSearchParams, hasManuallyClosedPreview])
 
   const onFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -91,6 +115,7 @@ const Portal = () => {
 
   const handleClosePreview = () => {
     setSelectedFileForPreview(null)
+    setHasManuallyClosedPreview(true)
     // Remove fileId from URL
     const newParams = new URLSearchParams(searchParams)
     newParams.delete('fileId')
@@ -99,8 +124,18 @@ const Portal = () => {
 
   return (
     <div className="h-full flex p-2 md:p-6 lg:p-6">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-full min-w-0 rounded-xl">
+      {/* Main Content - Add transition and adjust width based on preview */}
+      <div
+        className={`
+        flex-1 
+        flex 
+        flex-col 
+        min-h-full 
+        min-w-0 
+        rounded-xl
+        ${selectedFileForPreview ? 'lg:mr-[700px]' : ''}
+      `}
+      >
         {/* Fixed Header Section */}
         <div className="sticky top-0 z-10">
           {/* Header */}
@@ -175,7 +210,7 @@ const Portal = () => {
 
       {/* Preview Panel */}
       {selectedFileForPreview && (
-        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[700px] bg-white border-l border-gray-200 shadow-lg lg:shadow-xl z-50">
+        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[700px] bg-white border-l border-gray-200 shadow-lg lg:shadow-xl">
           <FilePreview
             file={selectedFileForPreview}
             onClose={handleClosePreview}
