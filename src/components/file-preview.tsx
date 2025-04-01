@@ -11,7 +11,7 @@ type FilePreviewProps = {
 }
 
 export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
-  const { portalMetadata, refreshFiles } = usePortalViewerContext()
+  const { portalMetadata, refreshFiles, isOwner } = usePortalViewerContext()
   const { deleteFile } = usePortalContext()
   const [isLoading, setIsLoading] = useState(true)
   const [content, setContent] = useState<string | null>(null)
@@ -213,13 +213,15 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
             >
               <LucideIcon name="Download" size="md" />
             </button> */}
-            <button
-              onClick={() => setShowDeleteConfirmation(true)}
-              className="text-red-500 hover:text-red-600"
-              title="Delete file"
-            >
-              <LucideIcon name="Trash" size="md" />
-            </button>
+            {isOwner && (
+              <button
+                onClick={() => setShowDeleteConfirmation(true)}
+                className="text-red-500 hover:text-red-600"
+                title="Delete file"
+              >
+                <LucideIcon name="Trash" size="md" />
+              </button>
+            )}
             <div className="h-5 w-px bg-gray-200" />
             <button
               onClick={onClose}
