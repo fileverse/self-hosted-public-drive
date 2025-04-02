@@ -4,7 +4,7 @@ import { usePortalViewerContext } from '../providers/portal-viewer-provider'
 import { LucideIcon } from '@fileverse/ui'
 import { usePortalContext } from '../providers/portal-provider'
 import { DeleteConfirmationModal } from './delete-confirmation-modal'
-import { RenameFileModal } from './rename-file-modal'
+import { EditFileModal } from './edit-file-modal'
 
 type FilePreviewProps = {
   file: PortalFile
@@ -13,7 +13,7 @@ type FilePreviewProps = {
 
 export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   const { portalMetadata, refreshFiles, isOwner } = usePortalViewerContext()
-  const { deleteFile, updateFileName } = usePortalContext()
+  const { deleteFile } = usePortalContext()
   const [isLoading, setIsLoading] = useState(true)
   const [content, setContent] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -22,8 +22,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   const [isMetadataLoading, setIsMetadataLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
-  const [showRenameModal, setShowRenameModal] = useState(false)
-  const [isRenaming, setIsRenaming] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -169,24 +168,6 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
     }
   }
 
-  const handleRename = async (newName: string) => {
-    try {
-      setIsRenaming(true)
-      await updateFileName(
-        file.fileId,
-        newName,
-        file.metadataHash,
-        file.contentHash
-      )
-      setShowRenameModal(false)
-      refreshFiles?.()
-    } catch (error) {
-      console.error('Failed to rename file:', error)
-    } finally {
-      setIsRenaming(false)
-    }
-  }
-
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
@@ -204,7 +185,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
             </h1>
             {isOwner && (
               <button
-                onClick={() => setShowRenameModal(true)}
+                onClick={() => setShowEditModal(true)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <LucideIcon name="Pencil" size="sm" />
@@ -289,14 +270,9 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
         )}
       </div>
 
-      {/* Add RenameModal */}
-      {showRenameModal && (
-        <RenameFileModal
-          fileName={fileMetadata?.name || file.name}
-          onClose={() => setShowRenameModal(false)}
-          onRename={handleRename}
-          isRenaming={isRenaming}
-        />
+      {/* Add EditModal */}
+      {showEditModal && (
+        <EditFileModal file={file} onClose={() => setShowEditModal(false)} />
       )}
 
       {/* Delete Confirmation Modal */}

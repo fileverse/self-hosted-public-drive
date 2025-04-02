@@ -17,7 +17,8 @@ export const getIPFSAsset = async ({
   if (!fetchResponse) throw new Error(FAILED_IPFS_FETCH_ERROR)
 
   const data = await fetchResponse.json()
-  return { data }
+  console.log('Fetched IPFS asset:', data)
+  return data
 }
 
 export const withRetry = async (fn: () => Promise<any>, retries = 3) => {

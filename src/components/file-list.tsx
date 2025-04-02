@@ -7,35 +7,97 @@ import { getNameAndExtension, getRelativeTime } from '../utils/helpers'
 import { DELETE_FILE_METADATA } from '../utils/constants'
 import { DeleteConfirmationModal } from './delete-confirmation-modal'
 import { usePortalContext } from '../providers/portal-provider'
-import { RenameFileModal } from './rename-file-modal'
+import { EditFileModal } from './edit-file-modal'
 
 type FileListProps = {
   onFileSelect?: (file: PortalFile) => void
 }
 
 export const FileList = ({ onFileSelect }: FileListProps) => {
-  const { isLoadingFiles, files } = usePortalViewerContext()
+  const { isLoadingFiles, files, portalMetadata } = usePortalViewerContext()
+
+  // Add console.logs to check data
+  console.log('Portal Metadata:', portalMetadata)
+  console.log('Files:', files)
+  console.log('Sections:', portalMetadata?.data?.sections)
+
+  const sections = portalMetadata?.data?.sections || []
 
   if (isLoadingFiles) {
     return <FileListLoader />
   }
 
-  // Filter out deleted files and sort by fileId in ascending order
-  const activeFiles = files
-    .filter(
-      (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
-    )
-    .sort((a, b) => a.fileId - b.fileId) // Changed sorting order here
+  // Group files by section, with fallback for undefined sectionId
+  const filesBySection = files.reduce(
+    (acc, file) => {
+      if (file.metadataHash === DELETE_FILE_METADATA.metadataIpfsHash)
+        return acc
 
-  const fileList = activeFiles.map((file) => (
-    <FileListItem
-      key={file.fileId}
-      {...file}
-      onClick={() => onFileSelect?.(file)}
-    />
-  ))
+      const sectionId = file.sectionId || 'others' // Changed from 'unsorted' to 'others'
 
-  return <div className="w-full flex flex-col">{fileList}</div>
+      if (!acc[sectionId]) {
+        acc[sectionId] = []
+      }
+      acc[sectionId].push(file)
+      return acc
+    },
+    {} as Record<string, PortalFile[]>
+  )
+
+  // Add console.log to check grouped files
+  console.log('Files by section:', filesBySection)
+
+  // Sort sections by order number
+  const sortedSections = sections.sort((a, b) => a.orderNumber - b.orderNumber)
+
+  return (
+    <div className="w-full flex flex-col">
+      {/* Show sorted sections first */}
+      {sortedSections.map((section) => {
+        const sectionFiles = filesBySection[section.id] || []
+        if (sectionFiles.length === 0) return null
+
+        return (
+          <div key={section.id} className="flex flex-col">
+            <div className="px-6 py-3 bg-gray-50 border-b">
+              <h2 className="text-sm font-medium text-gray-900">
+                {section.name}
+              </h2>
+            </div>
+
+            {sectionFiles
+              .sort((a, b) => a.fileId - b.fileId)
+              .map((file) => (
+                <FileListItem
+                  key={file.fileId}
+                  {...file}
+                  onClick={() => onFileSelect?.(file)}
+                />
+              ))}
+          </div>
+        )
+      })}
+
+      {/* Show others section if any */}
+      {filesBySection['others'] && filesBySection['others'].length > 0 && (
+        <div className="flex flex-col">
+          <div className="px-6 py-3 bg-gray-50 border-b">
+            <h2 className="text-sm font-medium text-gray-900">Others</h2>
+          </div>
+
+          {filesBySection['others']
+            .sort((a, b) => a.fileId - b.fileId)
+            .map((file) => (
+              <FileListItem
+                key={file.fileId}
+                {...file}
+                onClick={() => onFileSelect?.(file)}
+              />
+            ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 const FileListItem = ({
@@ -45,12 +107,11 @@ const FileListItem = ({
   const { name, createdAt, fileId } = props
   const { name: nameWithoutExtension, extension } = getNameAndExtension(name)
   const { isOwner, refreshFiles } = usePortalViewerContext()
-  const { deleteFile, updateFileName } = usePortalContext()
+  const { deleteFile } = usePortalContext()
   const [showMenu, setShowMenu] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [showRenameModal, setShowRenameModal] = useState(false)
-  const [isRenaming, setIsRenaming] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const handleDelete = async () => {
     try {
@@ -62,24 +123,6 @@ const FileListItem = ({
       console.error('Failed to delete file:', error)
     } finally {
       setIsDeleting(false)
-    }
-  }
-
-  const handleRename = async (newName: string) => {
-    try {
-      setIsRenaming(true)
-      await updateFileName(
-        props.fileId,
-        newName,
-        props.metadataHash,
-        props.contentHash
-      )
-      setShowRenameModal(false)
-      refreshFiles?.()
-    } catch (error) {
-      console.error('Failed to rename file:', error)
-    } finally {
-      setIsRenaming(false)
     }
   }
 
@@ -117,43 +160,41 @@ const FileListItem = ({
         </div>
 
         {isOwner && (
-          <div className="relative" data-menu>
+          <div className="relative">
             <button
-              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-900 transition-all duration-200 p-1"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowMenu(!showMenu)
               }}
+              className="opacity-0 group-hover:opacity-100 p-2 hover:bg-gray-100 rounded-lg transition-all duration-200"
             >
-              <LucideIcon name="EllipsisVertical" size="md" />
+              <LucideIcon name="EllipsisVertical" size="sm" />
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-1 w-36 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-[60]">
-                <div className="py-1">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setShowMenu(false)
-                      setShowRenameModal(true)
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
-                  >
-                    <LucideIcon name="Pencil" size="sm" className="mr-2" />
-                    Rename
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setShowMenu(false)
-                      setShowDeleteConfirmation(true)
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full"
-                  >
-                    <LucideIcon name="Trash2" size="sm" className="mr-2" />
-                    Delete
-                  </button>
-                </div>
+              <div className="absolute right-0 mt-1 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowMenu(false)
+                    setShowEditModal(true)
+                  }}
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                >
+                  <LucideIcon name="Pencil" size="sm" className="mr-2" />
+                  Edit file
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowMenu(false)
+                    setShowDeleteConfirmation(true)
+                  }}
+                  className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full"
+                >
+                  <LucideIcon name="Trash2" size="sm" className="mr-2" />
+                  Delete
+                </button>
               </div>
             )}
           </div>
@@ -169,36 +210,23 @@ const FileListItem = ({
         />
       )}
 
-      {showRenameModal && (
-        <RenameFileModal
-          fileName={name}
-          onClose={() => setShowRenameModal(false)}
-          onRename={handleRename}
-          isRenaming={isRenaming}
-        />
+      {showEditModal && (
+        <EditFileModal file={props} onClose={() => setShowEditModal(false)} />
       )}
     </>
   )
 }
 
 const FileListLoader = () => {
-  const loaders = []
-  for (let i = 0; i < 10; i++) {
-    loaders.push(
-      <div key={i} className="px-6 py-3 flex items-center gap-3 border-b">
-        {/* Icon placeholder */}
-        <SkeletonLoader className="w-10 h-10 rounded" />
-
-        {/* Name and extension placeholder */}
-        <div className="flex-1 min-w-0">
-          <SkeletonLoader className="w-3/4 h-5 mb-1" />
-          <SkeletonLoader className="w-1/4 h-4" />
-        </div>
-
-        {/* Created time placeholder */}
-        <SkeletonLoader className="w-24 h-4" />
+  return (
+    <div className="px-6 py-3 flex items-center gap-3 border-b">
+      <div className="w-8 h-8">
+        <SkeletonLoader className="w-full h-full rounded" />
       </div>
-    )
-  }
-  return <div className="flex flex-col">{loaders}</div>
+      <div className="flex-1">
+        <SkeletonLoader className="w-32 h-4 mb-1" />
+        <SkeletonLoader className="w-24 h-3" />
+      </div>
+    </div>
+  )
 }

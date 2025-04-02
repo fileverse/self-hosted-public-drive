@@ -74,8 +74,16 @@ export const PortalViewerProvider = ({
         gateway || undefined
       )) as unknown as IPortalMetadata
 
+      // Add console.log to debug metadata
+      console.log('Fetched portal metadata:', portalMetadata)
+
       if (gateway) {
         portalMetadata.pinataGateway = gateway
+      }
+
+      // Make sure sections exist in the metadata structure
+      if (!portalMetadata.sections) {
+        portalMetadata.sections = []
       }
 
       const portalOwner = await getPortalOwner(portalAddress as Hex)
@@ -96,12 +104,13 @@ export const PortalViewerProvider = ({
               portalAddress as Hex
             )
 
-            const fileMetadata = (
-              await getIPFSAsset({
-                ipfsHash: metadataHash,
-                gatewayURL: portalMetadata.pinataGateway,
-              })
-            ).data
+            const fileMetadata = await getIPFSAsset({
+              ipfsHash: metadataHash,
+              gatewayURL: portalMetadata.pinataGateway,
+            })
+
+            // Add console.log to debug file metadata
+            console.log('File metadata:', fileMetadata)
 
             return {
               metadataHash,
@@ -112,6 +121,8 @@ export const PortalViewerProvider = ({
               name: fileMetadata.name,
               extension: fileMetadata.extension,
               createdAt: fileMetadata.createdAt,
+              sectionId: fileMetadata.sectionId || 'others', // Ensure sectionId has a fallback
+              notes: fileMetadata.notes,
             } as PortalFile
           } catch (err) {
             console.error(`Failed to fetch file ${i}:`, err)
