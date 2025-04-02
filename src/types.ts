@@ -35,10 +35,13 @@ export type PortalSection = {
 }
 
 export interface IPortalMetadata {
-  name: string
-  description: string
+  data: {
+    name: string
+    description: string
+    pinataGateway: string
+    sections: PortalSection[]
+  }
   pinataGateway: string
-  sections: PortalSection[]
 }
 
 export type PortalFile = {

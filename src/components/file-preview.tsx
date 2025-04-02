@@ -33,9 +33,11 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
 
     const fetchMetadata = async () => {
       try {
-        const gateway = portalMetadata?.pinataGateway.startsWith('https://')
-          ? portalMetadata?.pinataGateway
-          : `https://${portalMetadata?.pinataGateway}`
+        const gateway = portalMetadata?.data.pinataGateway.startsWith(
+          'https://'
+        )
+          ? portalMetadata?.data.pinataGateway
+          : `https://${portalMetadata?.data.pinataGateway}`
 
         const response = await fetch(`${gateway}/ipfs/${file.metadataHash}`)
         const metadata = await response.json()
@@ -79,10 +81,10 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   }, [file, portalMetadata])
 
   const getFileUrl = () => {
-    if (!portalMetadata?.pinataGateway) return null
-    const gateway = portalMetadata.pinataGateway.startsWith('https://')
-      ? portalMetadata.pinataGateway
-      : `https://${portalMetadata.pinataGateway}`
+    if (!portalMetadata?.data.pinataGateway) return null
+    const gateway = portalMetadata.data.pinataGateway.startsWith('https://')
+      ? portalMetadata.data.pinataGateway
+      : `https://${portalMetadata.data.pinataGateway}`
     return `${gateway}/ipfs/${file.contentHash}`
   }
 

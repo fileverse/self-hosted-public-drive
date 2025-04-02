@@ -69,21 +69,20 @@ export const PortalViewerProvider = ({
       setIsLoadingFiles(true)
       setFiles([])
 
-      const portalMetadata = (await getPortalMetadata(
+      const rawMetadata = await getPortalMetadata(
         portalAddress as Hex,
         gateway || undefined
-      )) as unknown as IPortalMetadata
+      )
 
-      // Add console.log to debug metadata
-      console.log('Fetched portal metadata:', portalMetadata)
-
-      if (gateway) {
-        portalMetadata.pinataGateway = gateway
-      }
-
-      // Make sure sections exist in the metadata structure
-      if (!portalMetadata.sections) {
-        portalMetadata.sections = []
+      // Construct the metadata object in the correct format
+      const portalMetadata: IPortalMetadata = {
+        data: {
+          name: rawMetadata.name,
+          description: rawMetadata.description,
+          pinataGateway: gateway || rawMetadata.pinataGateway,
+          sections: rawMetadata.sections || [],
+        },
+        pinataGateway: gateway || rawMetadata.pinataGateway,
       }
 
       const portalOwner = await getPortalOwner(portalAddress as Hex)
@@ -106,11 +105,13 @@ export const PortalViewerProvider = ({
 
             const fileMetadata = await getIPFSAsset({
               ipfsHash: metadataHash,
-              gatewayURL: portalMetadata.pinataGateway,
+              gatewayURL: portalMetadata.data.pinataGateway,
             })
 
-            // Add console.log to debug file metadata
-            console.log('File metadata:', fileMetadata)
+            // Check if the file's section still exists in current sections
+            const sectionExists = portalMetadata.data.sections.some(
+              (section) => section.id === fileMetadata.sectionId
+            )
 
             return {
               metadataHash,
@@ -121,7 +122,7 @@ export const PortalViewerProvider = ({
               name: fileMetadata.name,
               extension: fileMetadata.extension,
               createdAt: fileMetadata.createdAt,
-              sectionId: fileMetadata.sectionId || 'others', // Ensure sectionId has a fallback
+              sectionId: sectionExists ? fileMetadata.sectionId : 'others', // Move to others if section doesn't exist
               notes: fileMetadata.notes,
             } as PortalFile
           } catch (err) {

@@ -11,11 +11,10 @@ type EditFileModalProps = {
 
 export const EditFileModal = ({ file, onClose }: EditFileModalProps) => {
   const { updateFileName } = usePortalContext()
-  const { portalMetadata } = usePortalViewerContext()
+  const { portalMetadata, refreshFiles } = usePortalViewerContext()
   const [isUpdating, setIsUpdating] = useState(false)
   const [fileName, setFileName] = useState(file.name)
   const [selectedSectionId, setSelectedSectionId] = useState(file.sectionId)
-
   const sections = portalMetadata?.data?.sections || []
 
   const handleSubmit = async () => {
@@ -26,8 +25,9 @@ export const EditFileModal = ({ file, onClose }: EditFileModalProps) => {
         fileName,
         file.metadataHash,
         file.contentHash,
-        selectedSectionId // Add section ID to the update
+        selectedSectionId
       )
+      await refreshFiles?.()
       onClose()
     } catch (error) {
       console.error('Failed to update file:', error)

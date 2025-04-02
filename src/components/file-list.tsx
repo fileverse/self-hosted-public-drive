@@ -16,11 +16,6 @@ type FileListProps = {
 export const FileList = ({ onFileSelect }: FileListProps) => {
   const { isLoadingFiles, files, portalMetadata } = usePortalViewerContext()
 
-  // Add console.logs to check data
-  console.log('Portal Metadata:', portalMetadata)
-  console.log('Files:', files)
-  console.log('Sections:', portalMetadata?.data?.sections)
-
   const sections = portalMetadata?.data?.sections || []
 
   if (isLoadingFiles) {
@@ -43,9 +38,6 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
     },
     {} as Record<string, PortalFile[]>
   )
-
-  // Add console.log to check grouped files
-  console.log('Files by section:', filesBySection)
 
   // Sort sections by order number
   const sortedSections = sections.sort((a, b) => a.orderNumber - b.orderNumber)

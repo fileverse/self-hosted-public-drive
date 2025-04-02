@@ -17,12 +17,12 @@ export const EditPortalModal = ({
   currentDescription,
 }: EditPortalModalProps) => {
   const { updatePortal } = usePortalContext()
-  const { portalMetadata } = usePortalViewerContext()
+  const { portalMetadata, refreshFiles } = usePortalViewerContext()
   const [isUpdating, setIsUpdating] = useState(false)
   const [name, setName] = useState(currentName)
   const [description, setDescription] = useState(currentDescription)
   const [sections, setSections] = useState<PortalSection[]>(
-    portalMetadata?.data.sections || []
+    portalMetadata?.data?.sections || []
   )
 
   const handleAddSection = () => {
@@ -63,6 +63,7 @@ export const EditPortalModal = ({
     try {
       setIsUpdating(true)
       await updatePortal(name, description, sections)
+      await refreshFiles()
       onClose()
     } catch (error) {
       console.error('Failed to update portal:', error)
