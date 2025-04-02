@@ -109,12 +109,13 @@ const Portal = () => {
 
   const handleUpload = async (
     notes: string,
-    setUploading: (loading: boolean) => void
+    setUploading: (loading: boolean) => void,
+    sectionId: string
   ) => {
     if (!selectedFile) return
     try {
       setUploading(true)
-      await addFile(selectedFile, updateFileList, notes)
+      await addFile(selectedFile, updateFileList, notes, sectionId)
       setShowUploadModal(false)
       setSelectedFile(null)
     } catch (error) {

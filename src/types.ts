@@ -28,23 +28,41 @@ export interface IExecuteUserOperationRequest {
   data: EncodeDeployDataReturnType
 }
 
+export type PortalSection = {
+  name: string
+  orderNumber: number
+  id: string
+}
+
 export interface IPortalMetadata {
   data: {
     name: string
     description: string
     pinataGateway: string
+    sections: PortalSection[]
   }
   pinataGateway: string
 }
 
 export type PortalFile = {
-  metadataHash: string
-  contentHash: string
   fileId: number
+  name: string
   fileType: string
   fileSize: number
-  name: string
   extension: string
   createdAt: number
+  metadataHash: string
+  contentHash: string
+  sectionId: string
   notes?: string
+}
+
+export type CreatePortalInputs = {
+  portalName: string
+  portalDescription: string
+  pinataJWT: string
+  pinataGateway: string
+  rpcUrl: string
+  pimlicoApiKey: string
+  sections: PortalSection[]
 }

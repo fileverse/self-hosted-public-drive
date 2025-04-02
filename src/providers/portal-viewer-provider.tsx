@@ -69,13 +69,20 @@ export const PortalViewerProvider = ({
       setIsLoadingFiles(true)
       setFiles([])
 
-      const portalMetadata = (await getPortalMetadata(
+      const rawMetadata = await getPortalMetadata(
         portalAddress as Hex,
         gateway || undefined
-      )) as unknown as IPortalMetadata
+      )
 
-      if (gateway) {
-        portalMetadata.pinataGateway = gateway
+      // Construct the metadata object in the correct format
+      const portalMetadata: IPortalMetadata = {
+        data: {
+          name: rawMetadata.name,
+          description: rawMetadata.description,
+          pinataGateway: gateway || rawMetadata.pinataGateway,
+          sections: rawMetadata.sections || [],
+        },
+        pinataGateway: gateway || rawMetadata.pinataGateway,
       }
 
       const portalOwner = await getPortalOwner(portalAddress as Hex)
@@ -96,12 +103,15 @@ export const PortalViewerProvider = ({
               portalAddress as Hex
             )
 
-            const fileMetadata = (
-              await getIPFSAsset({
-                ipfsHash: metadataHash,
-                gatewayURL: portalMetadata.pinataGateway,
-              })
-            ).data
+            const fileMetadata = await getIPFSAsset({
+              ipfsHash: metadataHash,
+              gatewayURL: portalMetadata.data.pinataGateway,
+            })
+
+            // Check if the file's section still exists in current sections
+            const sectionExists = portalMetadata.data.sections.some(
+              (section) => section.id === fileMetadata.sectionId
+            )
 
             return {
               metadataHash,
@@ -112,6 +122,8 @@ export const PortalViewerProvider = ({
               name: fileMetadata.name,
               extension: fileMetadata.extension,
               createdAt: fileMetadata.createdAt,
+              sectionId: sectionExists ? fileMetadata.sectionId : 'others', // Move to others if section doesn't exist
+              notes: fileMetadata.notes,
             } as PortalFile
           } catch (err) {
             console.error(`Failed to fetch file ${i}:`, err)

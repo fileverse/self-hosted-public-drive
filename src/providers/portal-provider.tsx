@@ -12,7 +12,7 @@ import {
   parseEventLogs,
 } from 'viem'
 import { gnosis } from 'viem/chains'
-import { HomePageFlow, PortalFile } from '../types'
+import { HomePageFlow, PortalFile, PortalSection } from '../types'
 import { getFileExtension } from '../utils/helpers'
 import { portalAbi } from '../data/portal-abi'
 import { DELETE_FILE_METADATA } from '../utils/constants'
@@ -26,17 +26,23 @@ type PortalContextType = {
   addFile: (
     file: File,
     updateFileList: (file: PortalFile) => void,
-    notes?: string
+    notes?: string,
+    sectionId?: string
   ) => Promise<void>
   agentAddress: Hex | null
   deleteFile: (fileId: number) => Promise<void>
   clearOwnerDetails: () => void
-  updatePortal: (name: string, description: string) => Promise<void>
+  updatePortal: (
+    name: string,
+    description: string,
+    sections: PortalSection[]
+  ) => Promise<void>
   updateFileName: (
     fileId: number,
     newName: string,
     currentMetadataHash: string,
-    currentContentHash: string
+    currentContentHash: string,
+    newSectionId: string
   ) => Promise<void>
 }
 
@@ -84,6 +90,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
       name: values.portalName,
       description: values.portalDescription,
       pinataGateway: values.pinataGateway,
+      sections: values.sections.sort((a, b) => a.orderNumber - b.orderNumber),
     }
 
     const { cid } = await pinataSDK.upload.public.json(portalMetadata, {
@@ -160,10 +167,13 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
   const addFile = async (
     file: File,
     updateFileList: (file: PortalFile) => void,
-    notes?: string
+    notes?: string,
+    sectionId?: string
   ) => {
     if (!pinataSDK || !portalDetails || !agentInstance)
       throw new Error('Not initialized')
+
+    if (!sectionId) throw new Error('Section ID is required')
 
     const fileMetadata = {
       name: file.name,
@@ -172,12 +182,14 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
       extension: getFileExtension(file.name),
       createdAt: Date.now(),
       notes,
+      sectionId,
+      fileId: 0,
+      contentHash: '',
+      metadataHash: '',
     } as PortalFile
 
     const { cid: metadataHash } = await pinataSDK.upload.public.json(
-      {
-        ...fileMetadata,
-      },
+      fileMetadata,
       {
         metadata: {
           name: `${file.name}_metadata.json`,
@@ -255,7 +267,11 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
     if (parsedLog.length === 0) throw new Error('Failed to delete file')
   }
 
-  const updatePortal = async (name: string, description: string) => {
+  const updatePortal = async (
+    name: string,
+    description: string,
+    sections: PortalSection[]
+  ) => {
     if (!pinataSDK || !portalDetails || !agentInstance)
       throw new Error('Not initialized')
 
@@ -263,6 +279,7 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
       name,
       description,
       pinataGateway: portalDetails.pinataGateway,
+      sections: sections.sort((a, b) => a.orderNumber - b.orderNumber),
     }
 
     // Upload new metadata to IPFS
@@ -302,38 +319,31 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
     fileId: number,
     newName: string,
     currentMetadataHash: string,
-    currentContentHash: string
+    currentContentHash: string,
+    newSectionId: string
   ) => {
     if (!pinataSDK || !portalDetails || !agentInstance)
       throw new Error('Not initialized')
 
     try {
-      // Ensure gateway URL is properly formatted
       const gateway = portalDetails.pinataGateway.startsWith('https://')
         ? portalDetails.pinataGateway
         : `https://${portalDetails.pinataGateway}`
 
-      // Fetch existing metadata from IPFS
       const response = await fetch(`${gateway}/ipfs/${currentMetadataHash}`)
-
       if (!response.ok) {
         throw new Error(`Failed to fetch metadata: ${response.statusText}`)
       }
 
-      let metadata
-      try {
-        metadata = await response.json()
-      } catch (e) {
-        throw new Error('Failed to parse metadata JSON from IPFS')
-      }
+      const metadata = await response.json()
 
-      // Update the name in the metadata
+      // Update both name and sectionId
       const updatedMetadata = {
         ...metadata,
         name: newName,
+        sectionId: newSectionId,
       }
 
-      // Upload the updated metadata to IPFS
       const { cid: newMetadataHash } = await pinataSDK.upload.public.json(
         updatedMetadata,
         {
@@ -343,7 +353,6 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
         }
       )
 
-      // Update the contract with the new metadata CID
       const callData = encodeFunctionData({
         abi: portalAbi,
         functionName: 'editFile',
@@ -358,9 +367,9 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
         FILE_TRX_TIMEOUT
       )
 
-      if (!success) throw new Error('Failed to update file name')
+      if (!success) throw new Error('Failed to update file')
     } catch (error) {
-      console.error('Failed to update file name:', error)
+      console.error('Failed to update file:', error)
       throw error
     }
   }
