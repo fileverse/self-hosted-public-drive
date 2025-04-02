@@ -14,6 +14,22 @@ import { EditPortalModal } from '../components/edit-portal-modal'
 import { DescriptionModal } from '../components/description-modal'
 import { DELETE_FILE_METADATA } from '../utils/constants'
 
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = useState(false)
+
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024) // 1024px is the 'lg' breakpoint
+    }
+
+    checkIsDesktop()
+    window.addEventListener('resize', checkIsDesktop)
+    return () => window.removeEventListener('resize', checkIsDesktop)
+  }, [])
+
+  return isDesktop
+}
+
 const Portal = () => {
   // Add this helper function right after the component declaration
   const truncateText = (text: string, maxLength: number) => {
@@ -36,6 +52,7 @@ const Portal = () => {
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
   const [hasManuallyClosedPreview, setHasManuallyClosedPreview] =
     useState(false)
+  const isDesktop = useIsDesktop()
 
   // Handle initial file preview from URL
   useEffect(() => {
@@ -47,10 +64,14 @@ const Portal = () => {
     }
   }, [fileId, files])
 
-  // Add this effect after other useEffect hooks
+  // Modify the auto-open effect
   useEffect(() => {
-    // Change !fileId to fileId === null to properly handle 0
-    if (files?.length > 0 && fileId === null && !hasManuallyClosedPreview) {
+    if (
+      files?.length > 0 &&
+      fileId === null &&
+      !hasManuallyClosedPreview &&
+      isDesktop
+    ) {
       const activeFiles = files
         .filter(
           (file) => file.metadataHash !== DELETE_FILE_METADATA.metadataIpfsHash
@@ -66,7 +87,14 @@ const Portal = () => {
         setSelectedFileForPreview(oldestFile)
       }
     }
-  }, [files, fileId, searchParams, setSearchParams, hasManuallyClosedPreview])
+  }, [
+    files,
+    fileId,
+    searchParams,
+    setSearchParams,
+    hasManuallyClosedPreview,
+    isDesktop,
+  ])
 
   const onFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -137,7 +165,7 @@ const Portal = () => {
       `}
       >
         {/* Fixed Header Section */}
-        <div className="sticky top-0 z-10">
+        <div className="sticky top-0 z-0">
           {/* Header */}
           <div className="px-6 pt-6 pb-4 flex items-start justify-between">
             <div className="flex items-center gap-3">
