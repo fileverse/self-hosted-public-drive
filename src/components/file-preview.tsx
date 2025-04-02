@@ -263,7 +263,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
                 />
               </button>
               {isNotesExpanded && (
-                <div className="px-4 pb-4 text-sm text-gray-600">
+                <div className="px-4 pb-4 text-sm text-gray-600 break-words ">
                   {fileMetadata?.notes || 'No notes available'}
                 </div>
               )}
