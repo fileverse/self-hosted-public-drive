@@ -210,15 +210,23 @@ const FileListItem = ({
 }
 
 const FileListLoader = () => {
-  return (
-    <div className="px-6 py-3 flex items-center gap-3 border-b">
-      <div className="w-8 h-8">
-        <SkeletonLoader className="w-full h-full rounded" />
+  const loaders = []
+  for (let i = 0; i < 10; i++) {
+    loaders.push(
+      <div key={i} className="px-6 py-3 flex items-center gap-3 border-b">
+        {/* Icon placeholder */}
+        <SkeletonLoader className="w-10 h-10 rounded" />
+
+        {/* Name and extension placeholder */}
+        <div className="flex-1 min-w-0">
+          <SkeletonLoader className="w-3/4 h-5 mb-1" />
+          <SkeletonLoader className="w-1/4 h-4" />
+        </div>
+
+        {/* Created time placeholder */}
+        <SkeletonLoader className="w-24 h-4" />
       </div>
-      <div className="flex-1">
-        <SkeletonLoader className="w-32 h-4 mb-1" />
-        <SkeletonLoader className="w-24 h-3" />
-      </div>
-    </div>
-  )
+    )
+  }
+  return <div className="flex flex-col">{loaders}</div>
 }
