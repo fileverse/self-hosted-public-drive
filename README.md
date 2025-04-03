@@ -1,54 +1,119 @@
-# React + TypeScript + Vite
+# Self-Hosted Public Drive
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A decentralized file management system that gives you full control over your content through peer-to-peer networks, decentralized ID, and public blockchains.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project provides a self-hosted approach to non-encrypted file management, offering users complete control over their infrastructure:
+- Where you store your content
+- How you host your static drive
+- How you deploy your onchain smart account
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Decentralized Storage**: Uses IPFS for content storage
+- **Blockchain Integration**: Smart contracts on Gnosis Chain
+- **Account Abstraction**: Utilizes Pimlico paymasters
+- **File Management**:
+  - Upload and organize files
+  - Create sections for better content organization
+  - Preview supported file types
+  - Public sharing capabilities
+- **Portal System**:
+  - Create and manage your own portal
+  - Proof of publishing verification
+  - Owner address verification
+  - Content hash tracking
+  - Onchain record verification
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Technical Stack
+
+- Frontend: React with TypeScript
+- Storage: IPFS
+- Blockchain: Gnosis Chain
+- Account Abstraction: Pimlico
+- Styling: Tailwind CSS
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+3. Set up environment variables:
+```env
+VITE_ACCESS_CODE=your_access_code
+
+VITE_RPC_URL=your_rpc_endpoint
+```
+4. Run the development server:
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Creating a Portal
+1. Access the application
+2. Choose "Create New"
+3. Fill in portal details:
+   - Portal Name
+   - Portal Description
+   - Pinata Keys (for IPFS)
+   - RPC Endpoint
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+### Managing Files
+- Upload files through the intuitive interface
+- Organize content into sections
+- Preview files directly in the application
+- Share content publicly
+
+### Verification
+Each portal provides proof of publishing with:
+- Owner address (verified on Gnosisscan)
+- Onchain record (verified on Gnosisscan)
+
+## Architecture
+
+The application follows a decentralized architecture:
+- Frontend serves as a static interface
+- IPFS handles content storage
+- Smart contracts manage ownership and access
+- Account abstraction provides seamless blockchain interactions
+
+## Security
+
+- Non-encrypted file management
+- Public blockchain verification
+- Decentralized identity management
+- Smart contract-based access control
+
+## License
+
+GNU GPL v3
+
+## Important Notes
+
+This repository is experimental and its authors:
+- Are not responsible for any warranties regarding the software
+- Are not obligated to provide guarantees or support
+- Cannot be held liable for damages caused by the software
+
+## Customization
+
+You can customize your public drive by:
+- Using different networks
+- Implementing alternative middleware
+- Modifying storage solutions
+- Adjusting smart contract interactions
+
+## Support
+
+While this is an experimental project with no official support, you can:
+- Open issues for bugs
+- Suggest improvements through pull requests
+
+---
+
+Built with ❤️ for decentralized content management
