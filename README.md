@@ -47,6 +47,20 @@ This repository follows a GNU GPL v3 license and its authors are not responsible
 1. Clone the repository
 2. Install dependencies:
 
+```bash
+npm install
+```
+3. Set up environment variables:
+```env
+VITE_ACCESS_CODE=your_access_code
+
+VITE_RPC_URL=your_rpc_endpoint
+```
+4. Run the development server:
+```bash
+npm run dev
+```
+
 ## Usage
 
 ### Creating a Portal
