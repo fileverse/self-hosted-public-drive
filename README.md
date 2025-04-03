@@ -9,6 +9,12 @@ This project provides a self-hosted approach to non-encrypted file management, o
 - How you host your static drive
 - How you deploy your onchain smart account
 
+## Disclaimer
+
+This repository is experimental and focuses on a self-hosted approach to non-encrypted file management using p2p networks, decentralized ID and public blockchains. This first version uses by default the IPFS network, Fileverse smart contracts, and Pimlico paymasters for account abstraction but this can be changed to prioritise other networks and middleware.
+
+This repository follows a GNU GPL v3 license and its authors are not responsible for any warranties regarding the software, meaning they are not obligated to provide any guarantees or support, nor can they be held liable for damages caused by the software.
+
 ## Features
 
 - **Decentralized Storage**: Uses IPFS for content storage
@@ -93,11 +99,6 @@ The application follows a decentralized architecture:
 
 GNU GPL v3
 
-## Disclaimer
-
-This repository is experimental and focuses on a self-hosted approach to non-encrypted file management using p2p networks, decentralized ID and public blockchains. This first version uses by default the IPFS network, Fileverse smart contracts, and Pimlico paymasters for account abstraction but this can be changed to prioritise other networks and middleware.
-
-This repository follows a GNU GPL v3 license and its authors are not responsible for any warranties regarding the software, meaning they are not obligated to provide any guarantees or support, nor can they be held liable for damages caused by the software.
 
 ## Customization
 
