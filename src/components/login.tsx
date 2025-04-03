@@ -141,7 +141,7 @@ export const Login = () => {
             onClick={onLoginToPortal}
             className="w-full mt-5 p-4 sm:p-5 text-[16px]"
           >
-            Login to portal
+            Log in to public drive
           </Button>
         </div>
       )}

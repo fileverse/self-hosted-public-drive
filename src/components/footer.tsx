@@ -1,14 +1,26 @@
 const Footer = () => {
   return (
-    <div className="mt-auto pt-6 sm:pt-8 text-helper-text-sm color-text-secondary mt-auto">
+    <div className="fixed bottom-10 mx-auto max-h-[200px] bg-[#F8F9FA] overflow-y-auto max-w-[768px] w-full text-sm text-gray-500">
       <span>
-        [Description] Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-        enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-        in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-        officia deserunt mollit anim id est laborum.
+        This{' '}
+        <a
+          style={{ color: 'blue' }}
+          href="https://github.com/fileverse/self-hosted-public-drive"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          repository
+        </a>{' '}
+        is experimental and focuses on a self-hosted approach to non-encrypted
+        file management using peer-to-peer networks, decentralized ID, and
+        public blockchains. This version uses by default the The InterPlanetary
+        File System (IPFS), smart contracts on Gnosis Chain, and Pimlico
+        paymasters for account abstraction. You can run and maintain your public
+        drive by using other networks and middleware. This repository follows a
+        GNU GPL v3 license and its authors are not responsible for any
+        warranties regarding the software, meaning they are not obligated to
+        provide any guarantees or support, nor can they be held liable for
+        damages caused by the software.
       </span>
     </div>
   )

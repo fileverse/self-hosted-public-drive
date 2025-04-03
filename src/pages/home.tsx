@@ -11,15 +11,19 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const HEADING_MAP = {
-  [HomePageFlow.CREATE_NEW]: 'Portal Creation',
-  [HomePageFlow.LOGIN_TO_PORTAL]: 'Login to Portal',
+  [HomePageFlow.CREATE_NEW]: 'Public drive creation',
+  [HomePageFlow.LOGIN_TO_PORTAL]: 'Log in to my public drive',
   [HomePageFlow.DOWNLOAD_KEYS]: 'Please download your keys',
 }
 
 const DOWNLOAD_KEYS_DESCRIPTION =
   'Unlike big-tech platforms that can access your data, censor it, or arbitrarily revoke your account, Fileverse takes steps to offer you self-sovereignty. This static page is designed to make it easy for you to control your documents end-to-end without depending on centralized servers 💛'
-const DEFAULT_DESCRIPTION =
-  'Independently recover all documents tied to your account in case the main Fileveres portal app is down.'
+
+const DEFAULT_DESCRIPTION = `Self-host your public content on a minimal yet intuitive interface optimised for public viewing. Here you have the full-flexibility and control on how to manage your own infrastructure; from where you store your content, to how you host your static drive, passing by how you deploy your onchain smart account. The open-source software can be found <a style="color: blue" href="https://github.com/fileverse/self-hosted-public-drive" target="_blank" rel="noopener noreferrer">here</a>`
+
+const CREATE_NEW_DESCRIPTION = `Here you have the full-flexibility and control on how to manage your own infrastructure; from where you store your content, to how you host your static drive, passing by how you deploy your onchain smart account.`
+
+const LOGIN_DESCRIPTION = `Independently recover all documents tied to your account in case the main Fileveres portal app is down.`
 
 const Home = () => {
   const { currentFlow, setCurrentFlow } = usePortalContext()
@@ -67,7 +71,7 @@ const Home = () => {
   }
   const heading = currentFlow
     ? HEADING_MAP[currentFlow]
-    : 'Fileverse Portal Walkaway'
+    : 'Self-Hosted Public Drive '
 
   const onBackButtonClick = () => {
     setCurrentFlow(null)
@@ -79,7 +83,11 @@ const Home = () => {
   const description =
     currentFlow === HomePageFlow.DOWNLOAD_KEYS
       ? DOWNLOAD_KEYS_DESCRIPTION
-      : DEFAULT_DESCRIPTION
+      : currentFlow === HomePageFlow.CREATE_NEW
+        ? CREATE_NEW_DESCRIPTION
+        : currentFlow === HomePageFlow.LOGIN_TO_PORTAL
+          ? LOGIN_DESCRIPTION
+          : DEFAULT_DESCRIPTION
 
   return (
     <main className="min-h-full px-4 sm:px-6">
@@ -89,14 +97,15 @@ const Home = () => {
             heading={heading}
             onBackClick={hasBackButton ? onBackButtonClick : undefined}
           />
-          <p className="text-[14px] sm:text-[16px] leading-6 text-[#77818A]">
-            {description}
-          </p>
+          <p
+            dangerouslySetInnerHTML={{ __html: description }}
+            className="text-[14px] sm:text-[16px] text-[#77818A]"
+          />
         </div>
 
         <div className="flex-1">{getComponent()}</div>
 
-        <Footer />
+        {currentFlow !== HomePageFlow.CREATE_NEW && <Footer />}
       </div>
     </main>
   )

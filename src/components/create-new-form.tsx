@@ -96,7 +96,7 @@ export const CreateNewForm = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <div className="text-heading-sm">General</div>
+        <div className="text-heading-sm">General (for your visitors)</div>
         <Input
           label="Portal Name"
           value={inputs.portalName}
