@@ -24,7 +24,8 @@ function App() {
           <footer className="fixed bottom-0 w-full bg-[#F8F9FA] py-2 px-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
+              className="text-sm  hover:text-gray-700 hover:underline"
+              style={{ color: '#6C757D' }}
             >
               Self-hosted public drive
             </button>
