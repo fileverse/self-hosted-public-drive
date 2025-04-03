@@ -8,8 +8,6 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { portalDetails } = usePortalContext()
 
-  console.log(portalDetails)
-
   return (
     <>
       <div className="pb-12">
