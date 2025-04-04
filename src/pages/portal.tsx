@@ -162,11 +162,12 @@ const Portal = () => {
         min-h-full 
         min-w-0 
         rounded-xl
+        bg-green
         ${selectedFileForPreview ? 'lg:mr-[700px]' : ''}
       `}
       >
         {/* Fixed Header Section */}
-        <div className="sticky top-0 z-0">
+        <div className="sticky top-0 z-0 bg-[#F8F9FA]">
           {/* Header */}
           <div className="px-6 pt-6 pb-4 flex items-start justify-between">
             <div className="flex items-center gap-3">
