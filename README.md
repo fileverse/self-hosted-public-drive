@@ -12,7 +12,7 @@ This project provides a self-hosted approach to non-encrypted file management, o
 
 ## Disclaimer
 
-This repository is experimental and focuses on a self-hosted approach to non-encrypted file management using p2p networks, decentralized ID and public blockchains. This first version uses by default the IPFS network, Fileverse smart contracts, and Pimlico paymasters for account abstraction but this can be changed to prioritise other networks and middleware.
+This repository is experimental and focuses on a self-hosted approach to non-encrypted file management using peer-to-peer networks, decentralized ID, and public blockchains. This first version uses by default the The InterPlanetary File System (IPFS), smart contracts on the Gnosis Chain, and Pimlico paymasters for account abstraction. You can run and maintain your self-hosted public drive by using other networks and infrastucture.
 
 This repository follows a GNU GPL v3 license and its authors are not responsible for any warranties regarding the software, meaning they are not obligated to provide any guarantees or support, nor can they be held liable for damages caused by the software.
 
@@ -26,8 +26,8 @@ This repository follows a GNU GPL v3 license and its authors are not responsible
     * Create sections for better content organization
     * Preview supported file types
     * Public sharing capabilities
-* **Portal System**:
-    * Create and manage your own portal
+* **Public Drive System**:
+    * Create and manage your own public drive
     * Proof of publishing verification
     * Owner address verification
     * Content hash tracking
@@ -63,13 +63,13 @@ npm run dev
 
 ## Usage
 
-### Creating a Portal
+### Creating a Public Drive
 
 1. Access the application
 2. Choose "Create New"
-3. Fill in portal details:
-    * Portal Name
-    * Portal Description
+3. Fill in drive details:
+    * Public Drive Name
+    * Public Drive Description
     * Pinata Keys (for IPFS)
     * RPC Endpoint
 
@@ -82,7 +82,7 @@ npm run dev
 
 ### Verification
 
-Each portal provides proof of publishing with:
+Each public drive provides proof of publishing with:
 
 * Owner address (verified on Gnosisscan)
 * Onchain record (verified on Gnosisscan)
