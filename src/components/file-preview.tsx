@@ -5,6 +5,8 @@ import { LucideIcon } from '@fileverse/ui'
 import { usePortalContext } from '../providers/portal-provider'
 import { DeleteConfirmationModal } from './delete-confirmation-modal'
 import { EditFileModal } from './edit-file-modal'
+import ReactMarkdown from 'react-markdown'
+import '../styles/markdown.css'
 
 type FilePreviewProps = {
   file: PortalFile
@@ -64,7 +66,8 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
       return
     }
 
-    if (file.fileType.startsWith('text/')) {
+    // Include markdown files in text content fetching
+    if (file.fileType.startsWith('text/') || file.extension === 'md') {
       fetch(fileUrl)
         .then((response) => response.text())
         .then((text) => {
@@ -92,6 +95,16 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
     const fileUrl = getFileUrl()
     if (!fileUrl) return null
 
+    // Handle markdown files first
+    if (file.extension === 'md' || file.fileType === 'text/markdown') {
+      return content ? (
+        <div className="p-4 markdown-content">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </div>
+      ) : null
+    }
+
+    // Handle other text files
     if (file.fileType.startsWith('text/')) {
       return content ? (
         <div className="text-[14px] leading-6 text-gray-700 overflow-auto">

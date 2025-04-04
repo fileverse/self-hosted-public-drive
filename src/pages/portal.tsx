@@ -218,7 +218,7 @@ const Portal = () => {
                 <input
                   onChange={onFileChange}
                   type="file"
-                  accept="image/*, audio/*, video/*, text/*"
+                  accept="image/*, audio/*, video/*, text/*, text/markdown, .md"
                   ref={fileInputRef}
                   className="hidden"
                 />

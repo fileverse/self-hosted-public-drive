@@ -175,10 +175,13 @@ export const PortalProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!sectionId) throw new Error('Section ID is required')
 
+    // Handle markdown file type
+    const fileType = file.name.endsWith('.md') ? 'text/markdown' : file.type
+
     const fileMetadata = {
       name: file.name,
       fileSize: file.size,
-      fileType: file.type,
+      fileType: fileType, // Use our adjusted fileType
       extension: getFileExtension(file.name),
       createdAt: Date.now(),
       notes,
