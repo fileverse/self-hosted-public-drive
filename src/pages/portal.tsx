@@ -191,7 +191,7 @@ const Portal = () => {
 
           {/* Description */}
           <div className="px-6 pb-4">
-            <div className="text-[14px] leading-5 text-gray-600">
+            <div className="text-[14px] leading-5 text-gray-600 py-2">
               {portalMetadata?.data.description && (
                 <div className="flex gap-1">
                   <p>{truncateText(portalMetadata.data.description, 100)}</p>

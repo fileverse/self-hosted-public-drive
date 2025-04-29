@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { usePortalViewerContext } from '../providers/portal-viewer-provider'
 import { SkeletonLoader } from './skeleton-loader'
 import { PortalFile } from '../types'
-import { getNameAndExtension, getRelativeTime } from '../utils/helpers'
+import { getNameAndExtension } from '../utils/helpers'
 import { DELETE_FILE_METADATA } from '../utils/constants'
 import { DeleteConfirmationModal } from './delete-confirmation-modal'
 import { usePortalContext } from '../providers/portal-provider'
@@ -52,7 +52,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
         return (
           <div key={section.id} className="flex flex-col">
             <div className="px-6 py-3 bg-gray-50 border-b">
-              <h2 className="text-sm font-medium text-gray-900">
+              <h2 className="text-base font-medium text-gray-900">
                 {section.name}
               </h2>
             </div>
@@ -74,7 +74,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
       {filesBySection['others'] && filesBySection['others'].length > 0 && (
         <div className="flex flex-col">
           <div className="px-6 py-3 bg-gray-50 border-b">
-            <h2 className="text-sm font-medium text-gray-900">Others</h2>
+            <h2 className="text-base font-medium text-gray-900">Others</h2>
           </div>
 
           {filesBySection['others']
@@ -96,7 +96,7 @@ const FileListItem = ({
   onClick,
   ...props
 }: PortalFile & { onClick?: () => void }) => {
-  const { name, createdAt, fileId } = props
+  const { name, fileId } = props
   const { name: nameWithoutExtension, extension } = getNameAndExtension(name)
   const { isOwner, refreshFiles } = usePortalViewerContext()
   const { deleteFile } = usePortalContext()
@@ -146,9 +146,6 @@ const FileListItem = ({
           <p className="text-[12px] leading-4 text-gray-500">
             {extension.toLowerCase()}
           </p>
-        </div>
-        <div className="text-[12px] leading-4 text-gray-500 whitespace-nowrap">
-          Created {getRelativeTime(createdAt)}
         </div>
 
         {isOwner && (
@@ -222,9 +219,6 @@ const FileListLoader = () => {
           <SkeletonLoader className="w-3/4 h-5 mb-1" />
           <SkeletonLoader className="w-1/4 h-4" />
         </div>
-
-        {/* Created time placeholder */}
-        <SkeletonLoader className="w-24 h-4" />
       </div>
     )
   }
