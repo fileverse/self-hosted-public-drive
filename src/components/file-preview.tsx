@@ -259,7 +259,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
             </div>
 
             {/* Notes Section */}
-            <div className="border-t sticky bottom-9 bg-[#F8F9FA]">
+            <div className="border-t sticky bottom-0 bg-[#F8F9FA]">
               <button
                 onClick={() => setIsNotesExpanded(!isNotesExpanded)}
                 className="w-full px-4 py-3 flex items-center justify-between text-left"

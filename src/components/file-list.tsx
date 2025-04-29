@@ -96,14 +96,53 @@ const FileListItem = ({
   onClick,
   ...props
 }: PortalFile & { onClick?: () => void }) => {
-  const { name, fileId } = props
-  const { name: nameWithoutExtension, extension } = getNameAndExtension(name)
+  const { name, fileId, fileType, extension } = props
+  const { name: nameWithoutExtension } = getNameAndExtension(name)
   const { isOwner, refreshFiles } = usePortalViewerContext()
   const { deleteFile } = usePortalContext()
   const [showMenu, setShowMenu] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+
+  // Function to determine the icon based on file type
+  const getFileIcon = () => {
+    // First check extension for specific file types
+    const lowerExtension = extension.toLowerCase()
+
+    // Document types
+    if (['pdf'].includes(lowerExtension)) {
+      return 'FileText'
+    }
+
+    // Code/text files
+    if (
+      ['js', 'jsx', 'ts', 'tsx', 'html', 'css', 'json'].includes(lowerExtension)
+    ) {
+      return 'Code'
+    }
+
+    // Markdown files
+    if (['md', 'markdown', 'txt'].includes(lowerExtension)) {
+      return 'FileText'
+    }
+
+    // Check by file type category
+    if (fileType.startsWith('image/')) {
+      return 'Image'
+    }
+
+    if (fileType.startsWith('video/')) {
+      return 'Video'
+    }
+
+    if (fileType.startsWith('audio/')) {
+      return 'Music'
+    }
+
+    // Default icon for all other files
+    return 'File'
+  }
 
   const handleDelete = async () => {
     try {
@@ -137,7 +176,7 @@ const FileListItem = ({
         className="group px-6 py-3 flex items-center gap-3 cursor-pointer border-b hover:bg-[#F2F4F5] transition-all duration-200"
       >
         <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
-          <LucideIcon name="File" className="text-gray-600" />
+          <LucideIcon name={getFileIcon()} className="text-gray-600" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[14px] leading-5 font-medium text-gray-900 truncate">

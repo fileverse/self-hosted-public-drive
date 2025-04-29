@@ -19,14 +19,18 @@ function App() {
 
       {portalDetails && (
         <>
-          <footer className="fixed bottom-0 w-full bg-[#F8F9FA] py-2 px-4">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="text-sm  hover:text-gray-700 hover:underline"
-              style={{ color: '#6C757D' }}
-            >
-              Self-hosted public drive
-            </button>
+          <footer className="fixed bottom-0 w-full bg-[#F8F9FA] py-2 px-4 z-10">
+            <div className="flex gap-1 items-center">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-sm hover:text-gray-700 hover:underline"
+                style={{ color: '#6C757D' }}
+              >
+                This is a self-hosted and decentralised public files management
+                system. It uses peer-to-peer networks, decentralized IDs, and
+                public blockchains.
+              </button>
+            </div>
           </footer>
 
           {isModalOpen && (

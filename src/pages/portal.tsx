@@ -240,7 +240,7 @@ const Portal = () => {
 
       {/* Preview Panel */}
       {selectedFileForPreview && (
-        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[700px] bg-white border-l border-gray-200 shadow-lg lg:shadow-xl">
+        <div className="fixed lg:static right-0 top-0 bottom-0 w-full lg:max-w-[700px] bg-white border-l border-gray-200 shadow-lg lg:shadow-xl z-20">
           <FilePreview
             file={selectedFileForPreview}
             onClose={handleClosePreview}
