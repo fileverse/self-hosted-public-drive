@@ -96,7 +96,7 @@ const FileListItem = ({
   onClick,
   ...props
 }: PortalFile & { onClick?: () => void }) => {
-  const { name, createdAt, fileId } = props
+  const { name, fileId } = props
   const { name: nameWithoutExtension, extension } = getNameAndExtension(name)
   const { isOwner, refreshFiles } = usePortalViewerContext()
   const { deleteFile } = usePortalContext()
