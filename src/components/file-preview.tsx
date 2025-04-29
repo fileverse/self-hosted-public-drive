@@ -19,7 +19,7 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
   const [isLoading, setIsLoading] = useState(true)
   const [content, setContent] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isNotesExpanded, setIsNotesExpanded] = useState(true)
+  const [isNotesExpanded, setIsNotesExpanded] = useState(false)
   const [fileMetadata, setFileMetadata] = useState<any>(null)
   const [isMetadataLoading, setIsMetadataLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -206,11 +206,6 @@ export const FilePreview = ({ file, onClose }: FilePreviewProps) => {
                 <LucideIcon name="Pencil" size="sm" />
               </button>
             )}
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <span className="uppercase">{file.fileType.split('/')[1]}</span>
-            <span>•</span>
-            <span>{(file.fileSize / 1024).toFixed(2)} KB</span>
           </div>
         </div>
         <div className="flex items-center gap-4">

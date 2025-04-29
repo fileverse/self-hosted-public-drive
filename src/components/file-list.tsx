@@ -52,7 +52,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
         return (
           <div key={section.id} className="flex flex-col">
             <div className="px-6 py-3 bg-gray-50 border-b">
-              <h2 className="text-sm font-medium text-gray-900">
+              <h2 className="text-base font-medium text-gray-900">
                 {section.name}
               </h2>
             </div>
@@ -74,7 +74,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
       {filesBySection['others'] && filesBySection['others'].length > 0 && (
         <div className="flex flex-col">
           <div className="px-6 py-3 bg-gray-50 border-b">
-            <h2 className="text-sm font-medium text-gray-900">Others</h2>
+            <h2 className="text-base font-medium text-gray-900">Others</h2>
           </div>
 
           {filesBySection['others']
@@ -146,9 +146,6 @@ const FileListItem = ({
           <p className="text-[12px] leading-4 text-gray-500">
             {extension.toLowerCase()}
           </p>
-        </div>
-        <div className="text-[12px] leading-4 text-gray-500 whitespace-nowrap">
-          Created {getRelativeTime(createdAt)}
         </div>
 
         {isOwner && (
@@ -222,9 +219,6 @@ const FileListLoader = () => {
           <SkeletonLoader className="w-3/4 h-5 mb-1" />
           <SkeletonLoader className="w-1/4 h-4" />
         </div>
-
-        {/* Created time placeholder */}
-        <SkeletonLoader className="w-24 h-4" />
       </div>
     )
   }
