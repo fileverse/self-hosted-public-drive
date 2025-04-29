@@ -52,7 +52,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
         return (
           <div key={section.id} className="flex flex-col">
             <div className="px-6 py-3 bg-gray-50 border-b">
-              <h2 className="text-base font-medium text-gray-900">
+              <h2 className="text-md font-medium text-gray-900">
                 {section.name}
               </h2>
             </div>
@@ -74,7 +74,7 @@ export const FileList = ({ onFileSelect }: FileListProps) => {
       {filesBySection['others'] && filesBySection['others'].length > 0 && (
         <div className="flex flex-col">
           <div className="px-6 py-3 bg-gray-50 border-b">
-            <h2 className="text-base font-medium text-gray-900">Others</h2>
+            <h2 className="text-md font-medium text-gray-900">Others</h2>
           </div>
 
           {filesBySection['others']
